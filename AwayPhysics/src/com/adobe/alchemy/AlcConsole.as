@@ -14,7 +14,7 @@ package com.adobe.alchemy
 			AlcConsole.current = this
 			_physicsWorld = physicsWorld;
 		}
-		public function collisionCallback(obj1:Object, mpt:uint, obj2:Object) : void {
+		public function collisionCallback(obj1:uint, mpt:uint, obj2:uint) : void {
 			var obj:AWPCollisionObject = _physicsWorld.collisionObjects[obj1.toString()];
 			if(obj) obj.collisionCallback(mpt,_physicsWorld.collisionObjects[obj2.toString()]);
 		}
