@@ -994,7 +994,7 @@ void physicsStepInC() {
 
 int main() {
 
-	AS3_LibInit();
+	AS3_GoAsync();
 	
 	return 0;
 }
