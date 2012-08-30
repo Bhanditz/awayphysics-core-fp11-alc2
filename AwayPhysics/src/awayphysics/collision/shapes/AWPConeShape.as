@@ -1,5 +1,5 @@
 package awayphysics.collision.shapes {
-	import C_Run.createConeShapeInC;
+	import AWPC_Run.createConeShapeInC;
 	public class AWPConeShape extends AWPCollisionShape {
 		
 		private var _radius:Number;

@@ -1,9 +1,10 @@
 package awayphysics.collision.shapes
 {
-	import com.adobe.alchemy.CModule;
-	import C_Run.createTriangleVertexDataBufferInC;
-	import C_Run.removeTriangleVertexDataBufferInC;
-	import C_Run.createConvexHullShapeInC;
+	import AWPC_Run.CModule;
+	import AWPC_Run.createTriangleVertexDataBufferInC;
+	import AWPC_Run.removeTriangleVertexDataBufferInC;
+	import AWPC_Run.createConvexHullShapeInC;
+	import AWPC_Run.disposeCollisionShapeInC
 	import away3d.core.base.Geometry;
 	
 	public class AWPConvexHullShape extends AWPCollisionShape
@@ -27,9 +28,19 @@ package awayphysics.collision.shapes
 			super(pointer, 5);
 		}
 		
-		public function deleteConvexHullShapeBuffer() : void
+		override public function dispose() : void
 		{
-			removeTriangleVertexDataBufferInC(vertexDataPtr);
+			m_counter--;
+			if (m_counter > 0) {
+				return;
+			}else {
+				m_counter = 0;
+			}
+			if (!_cleanup) {
+				_cleanup  = true;
+				removeTriangleVertexDataBufferInC(vertexDataPtr);
+				disposeCollisionShapeInC(pointer);
+			}
 		}
 		
 		public function get geometry():Geometry {

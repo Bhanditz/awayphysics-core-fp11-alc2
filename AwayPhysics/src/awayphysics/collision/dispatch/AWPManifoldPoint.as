@@ -1,5 +1,5 @@
 package awayphysics.collision.dispatch {
-	import com.adobe.alchemy.CModule;
+	import AWPC_Run.CModule;
 	import awayphysics.AWPBase;
 	import awayphysics.math.AWPVector3;
 

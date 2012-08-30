@@ -1,12 +1,12 @@
 package awayphysics.collision.shapes 
 {
-	import com.adobe.alchemy.CModule;
-	import C_Run.createTriangleIndexDataBufferInC;
-	import C_Run.removeTriangleIndexDataBufferInC;
-	import C_Run.createTriangleVertexDataBufferInC;
-	import C_Run.removeTriangleVertexDataBufferInC;
-	import C_Run.createTriangleIndexVertexArrayInC;
-	import C_Run.createGImpactMeshShapeInC;
+	import AWPC_Run.CModule;
+	import AWPC_Run.createTriangleIndexDataBufferInC;
+	import AWPC_Run.removeTriangleIndexDataBufferInC;
+	import AWPC_Run.createTriangleVertexDataBufferInC;
+	import AWPC_Run.removeTriangleVertexDataBufferInC;
+	import AWPC_Run.createTriangleIndexVertexArrayInC;
+	import AWPC_Run.createGImpactMeshShapeInC;
 	import away3d.core.base.Geometry;
 	
 	public class AWPGImpactMeshShape extends AWPCollisionShape 

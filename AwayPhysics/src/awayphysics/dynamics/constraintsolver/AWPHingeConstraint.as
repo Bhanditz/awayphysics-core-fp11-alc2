@@ -1,7 +1,7 @@
 package awayphysics.dynamics.constraintsolver {
-	import com.adobe.alchemy.CModule;
-	import C_Run.createHingeConstraint1InC;
-	import C_Run.createHingeConstraint2InC;
+	import AWPC_Run.CModule;
+	import AWPC_Run.createHingeConstraint1InC;
+	import AWPC_Run.createHingeConstraint2InC;
 	import awayphysics.dynamics.AWPRigidBody;
 	import awayphysics.math.AWPVector3;
 	

@@ -1,7 +1,7 @@
 package awayphysics.math {
-	import C_Run.vector3;
+	import AWPC_Run.vector3;
+	import AWPC_Run.CModule;
 	import awayphysics.AWPBase;
-	import com.adobe.alchemy.CModule;
 	import flash.geom.Vector3D;
 
 	public class AWPVector3 extends AWPBase {

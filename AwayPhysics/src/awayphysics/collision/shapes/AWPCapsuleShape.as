@@ -1,5 +1,5 @@
 package awayphysics.collision.shapes {
-	import C_Run.createCapsuleShapeInC;
+	import AWPC_Run.createCapsuleShapeInC;
 	public class AWPCapsuleShape extends AWPCollisionShape {
 		
 		private var _radius:Number;

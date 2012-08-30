@@ -1,11 +1,12 @@
 package awayphysics.collision.shapes {
-	import com.adobe.alchemy.CModule;
-	import C_Run.createTriangleIndexDataBufferInC;
-	import C_Run.removeTriangleIndexDataBufferInC;
-	import C_Run.createTriangleVertexDataBufferInC;
-	import C_Run.removeTriangleVertexDataBufferInC;
-	import C_Run.createTriangleIndexVertexArrayInC;
-	import C_Run.createBvhTriangleMeshShapeInC;
+	import AWPC_Run.CModule;
+	import AWPC_Run.createTriangleIndexDataBufferInC;
+	import AWPC_Run.removeTriangleIndexDataBufferInC;
+	import AWPC_Run.createTriangleVertexDataBufferInC;
+	import AWPC_Run.removeTriangleVertexDataBufferInC;
+	import AWPC_Run.createTriangleIndexVertexArrayInC;
+	import AWPC_Run.createBvhTriangleMeshShapeInC;
+	import AWPC_Run.disposeCollisionShapeInC;
 	
 	import away3d.core.base.Geometry;
 
@@ -42,12 +43,19 @@ package awayphysics.collision.shapes {
 			super(pointer, 9);
 		}
 
-		/**
-		 *release the memory of index/vertex buffer
-		 */
-		public function deleteBvhTriangleMeshShapeBuffer() : void {
-			removeTriangleIndexDataBufferInC(indexDataPtr);
-			removeTriangleVertexDataBufferInC(vertexDataPtr);
+		override public function dispose() : void {
+			m_counter--;
+			if (m_counter > 0) {
+				return;
+			}else {
+				m_counter = 0;
+			}
+			if (!_cleanup) {
+				_cleanup  = true;
+				removeTriangleIndexDataBufferInC(indexDataPtr);
+				removeTriangleVertexDataBufferInC(vertexDataPtr);
+				disposeCollisionShapeInC(pointer);
+			}
 		}
 		
 		public function get geometry():Geometry {

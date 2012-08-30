@@ -1,5 +1,5 @@
 package awayphysics.collision.dispatch {
-	import C_Run.createGhostObjectInC;
+	import AWPC_Run.createGhostObjectInC;
 	import away3d.containers.ObjectContainer3D;
 	import awayphysics.collision.shapes.AWPCollisionShape;
 

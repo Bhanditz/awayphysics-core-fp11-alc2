@@ -1,6 +1,6 @@
 package awayphysics.collision.shapes {
-	import com.adobe.alchemy.CModule;
-	import C_Run.createStaticPlaneShapeInC;
+	import AWPC_Run.CModule;
+	import AWPC_Run.createStaticPlaneShapeInC;
 	
 	import awayphysics.math.AWPVector3;
 	

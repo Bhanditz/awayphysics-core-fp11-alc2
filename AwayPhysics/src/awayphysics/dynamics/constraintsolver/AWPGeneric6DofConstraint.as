@@ -1,7 +1,7 @@
 package awayphysics.dynamics.constraintsolver {
-	import com.adobe.alchemy.CModule;
-	import C_Run.createGeneric6DofConstraint1;
-	import C_Run.createGeneric6DofConstraint2;
+	import AWPC_Run.CModule;
+	import AWPC_Run.createGeneric6DofConstraint1;
+	import AWPC_Run.createGeneric6DofConstraint2;
 	import awayphysics.dynamics.AWPRigidBody;
 	import awayphysics.math.*;
 

@@ -1,9 +1,10 @@
 package awayphysics.collision.shapes {
-	import C_Run.addCompoundChildInC;
-	import C_Run.createCompoundShapeInC;
-	import C_Run.removeCompoundChildInC;
-	import C_Run.setShapeScalingInC;
-	import com.adobe.alchemy.CModule;
+	import AWPC_Run.addCompoundChildInC;
+	import AWPC_Run.createCompoundShapeInC;
+	import AWPC_Run.removeCompoundChildInC;
+	import AWPC_Run.setShapeScalingInC;
+	import AWPC_Run.disposeCollisionShapeInC;
+	import AWPC_Run.CModule;
 	
 	import awayphysics.math.AWPMath;
 	import awayphysics.math.AWPMatrix3x3;
@@ -15,6 +16,7 @@ package awayphysics.collision.shapes {
 
 	public class AWPCompoundShape extends AWPCollisionShape {
 		private var _children : Vector.<AWPCollisionShape>;
+		private var _allChildren:Vector.<AWPCollisionShape>;
 		private var _transforms:Vector.<AWPTransform>;
 		private var _childTransform:AWPTransform;
 
@@ -25,6 +27,7 @@ package awayphysics.collision.shapes {
 			pointer = createCompoundShapeInC();
 			super(pointer, 7);
 			_children = new Vector.<AWPCollisionShape>();
+			_allChildren = new Vector.<AWPCollisionShape>();
 			_transforms = new Vector.<AWPTransform>();
 			
 			_childTransform = new AWPTransform();
@@ -57,6 +60,7 @@ package awayphysics.collision.shapes {
 			CModule.free(mat.pointer);
 
 			_children.push(child);
+			_allChildren.push(child);
 		}
 
 		/**
@@ -101,6 +105,24 @@ package awayphysics.collision.shapes {
 			CModule.free(vec.pointer);
 			for each(var shape:AWPCollisionShape in _children) {
 				shape.localScaling = new Vector3D(scale.x, scale.y, scale.z, 1);
+			}
+		}
+		
+		override public function dispose():void {
+			m_counter--;
+			if (m_counter > 0) {
+				return;
+			}else {
+				m_counter = 0;
+			}
+			if (!_cleanup) {
+				_cleanup  = true;
+				removeAllChildren();
+				for each(var shape:AWPCollisionShape in _allChildren) {
+					shape.dispose();
+				}
+				_allChildren.length = 0;
+				disposeCollisionShapeInC(pointer);
 			}
 		}
 	}

@@ -1,7 +1,8 @@
 package awayphysics.dynamics.vehicle {
-	import com.adobe.alchemy.CModule;
-	import C_Run.addVehicleWheelInC;
-	import C_Run.createVehicleInC;
+	import AWPC_Run.CModule;
+	import AWPC_Run.addVehicleWheelInC;
+	import AWPC_Run.createVehicleInC;
+	import AWPC_Run.disposeVehicleInC;
 	
 	import away3d.containers.ObjectContainer3D;
 	
@@ -82,6 +83,13 @@ package awayphysics.dynamics.vehicle {
 		public function updateWheelsTransform() : void {
 			for each (var wheel:AWPWheelInfo in m_wheelInfo) {
 				wheel.updateTransform();
+			}
+		}
+		
+		public function dispose():void {
+			if (!_cleanup) {
+				_cleanup = true;
+				disposeVehicleInC(pointer);
 			}
 		}
 	}

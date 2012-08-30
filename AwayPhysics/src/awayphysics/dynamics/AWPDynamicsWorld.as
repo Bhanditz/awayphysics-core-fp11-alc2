@@ -1,35 +1,30 @@
 package awayphysics.dynamics {
-	import C_Run.addBodyInC;
-	import C_Run.addBodyWithGroupInC;
-	import C_Run.addCharacterInC;
-	import C_Run.addConstraintInC;
-	import C_Run.addVehicleInC;
-	import C_Run.createDiscreteDynamicsWorldWithAxisSweep3InC;
-	import C_Run.createDiscreteDynamicsWorldWithDbvtInC;
-	import C_Run.initLib;
-	import C_Run.physicsStepInC;
-	import C_Run.removeBodyInC;
-	import C_Run.removeCharacterInC;
-	import C_Run.removeConstraintInC;
-	import C_Run.removeVehicleInC;
-	import C_Run.removeCollisionObjectInC;
+	import AWPC_Run.addBodyInC;
+	import AWPC_Run.addBodyWithGroupInC;
+	import AWPC_Run.addCharacterInC;
+	import AWPC_Run.addConstraintInC;
+	import AWPC_Run.addVehicleInC;
+	import AWPC_Run.createDiscreteDynamicsWorldWithAxisSweep3InC;
+	import AWPC_Run.createDiscreteDynamicsWorldWithDbvtInC;
+	import AWPC_Run.physicsStepInC;
+	import AWPC_Run.removeBodyInC;
+	import AWPC_Run.removeCharacterInC;
+	import AWPC_Run.removeConstraintInC;
+	import AWPC_Run.removeVehicleInC;
+	import AWPC_Run.removeCollisionObjectInC;
+	import AWPC_Run.disposeDynamicsWorldInC;
+	import AWPC_Run.CModule;
 	
 	import awayphysics.AWPBase;
 	import awayphysics.collision.dispatch.AWPCollisionObject;
 	import awayphysics.collision.dispatch.AWPCollisionWorld;
-	import awayphysics.collision.shapes.AWPBvhTriangleMeshShape;
-	import awayphysics.collision.shapes.AWPCompoundShape;
-	import awayphysics.collision.shapes.AWPConvexHullShape;
-	import awayphysics.collision.shapes.AWPHeightfieldTerrainShape;
 	import awayphysics.data.AWPCollisionFlags;
-	import awayphysics.data.AWPCollisionShapeType;
 	import awayphysics.dynamics.character.AWPKinematicCharacterController;
 	import awayphysics.dynamics.constraintsolver.AWPTypedConstraint;
 	import awayphysics.dynamics.vehicle.AWPRaycastVehicle;
 	import awayphysics.math.AWPVector3;
 	
-	import com.adobe.alchemy.AlcConsole;
-	import com.adobe.alchemy.CModule;
+	import com.adobe.flascc.Console;
 	
 	import flash.geom.Vector3D;
 	import flash.utils.Dictionary;
@@ -45,15 +40,15 @@ package awayphysics.dynamics {
 
 		public static function getInstance() : AWPDynamicsWorld {
 			if (!currentDynamicsWorld) {
-				trace("version: AwayPhysics v1.0 alpha (14-4-2012)");
+				trace("version: AwayPhysics v1.0 alpha (30-8-2012)");
 				currentDynamicsWorld = new AWPDynamicsWorld();
 			}
 			return currentDynamicsWorld;
 		}
 
 		public function AWPDynamicsWorld() {
-			initLib(this);
-			new AlcConsole(this);
+			CModule.startAsync(this);
+			new Console(this);
 			m_rigidBodies = new Vector.<AWPRigidBody>();
 			m_nonStaticRigidBodies = new Vector.<AWPRigidBody>();
 			m_vehicles = new Vector.<AWPRaycastVehicle>();
@@ -86,13 +81,18 @@ package awayphysics.dynamics {
 			m_gravity = new AWPVector3(pointer + 224);
 			this.gravity = new Vector3D(0, -10, 0);
 		}
+		
+		/**
+		 * dispose the physics world
+		 */
+		public function dispose():void {
+			disposeDynamicsWorldInC();
+		}
 
 		/**
 		 * add a rigidbody to physics world
 		 */
 		public function addRigidBody(body : AWPRigidBody) : void {
-			addBodyInC(body.pointer);
-
 			if (body.collisionFlags != AWPCollisionFlags.CF_STATIC_OBJECT) {
 				if (m_nonStaticRigidBodies.indexOf(body) < 0) {
 					m_nonStaticRigidBodies.push(body);
@@ -100,6 +100,7 @@ package awayphysics.dynamics {
 			}
 			if (m_rigidBodies.indexOf(body) < 0) {
 				m_rigidBodies.push(body);
+				addBodyInC(body.pointer);
 			}
 			if(!m_collisionObjects.hasOwnProperty(body.pointer.toString())){
 				m_collisionObjects[body.pointer.toString()] = body;
@@ -111,8 +112,6 @@ package awayphysics.dynamics {
 		 * refer to: http://bulletphysics.org/mediawiki-1.5.8/index.php/Collision_Filtering
 		 */
 		public function addRigidBodyWithGroup(body : AWPRigidBody, group : int, mask : int) : void {
-			addBodyWithGroupInC(body.pointer, group, mask);
-
 			if (body.collisionFlags != AWPCollisionFlags.CF_STATIC_OBJECT) {
 				if (m_nonStaticRigidBodies.indexOf(body) < 0) {
 					m_nonStaticRigidBodies.push(body);
@@ -120,6 +119,7 @@ package awayphysics.dynamics {
 			}
 			if (m_rigidBodies.indexOf(body) < 0) {
 				m_rigidBodies.push(body);
+				addBodyWithGroupInC(body.pointer, group, mask);
 			}
 			if(!m_collisionObjects.hasOwnProperty(body.pointer.toString())){
 				m_collisionObjects[body.pointer.toString()] = body;
@@ -127,26 +127,19 @@ package awayphysics.dynamics {
 		}
 
 		/**
-		 * remove a rigidbody from physics world
+		 * remove a rigidbody from physics world, if cleanup is true, release pointer in memory.
 		 */
-		public function removeRigidBody(body : AWPRigidBody) : void {
-			body.removeAllRays();
-			if(body.shape.shapeType==AWPCollisionShapeType.TRIANGLE_MESH_SHAPE){
-				AWPBvhTriangleMeshShape(body.shape).deleteBvhTriangleMeshShapeBuffer();
-			}else if(body.shape.shapeType==AWPCollisionShapeType.CONVEX_HULL_SHAPE){
-				AWPConvexHullShape(body.shape).deleteConvexHullShapeBuffer();
-			}else if(body.shape.shapeType==AWPCollisionShapeType.HEIGHT_FIELD_TERRAIN){
-				AWPHeightfieldTerrainShape(body.shape).deleteHeightfieldTerrainShapeBuffer();
-			}else if(body.shape.shapeType==AWPCollisionShapeType.COMPOUND_SHAPE){
-				AWPCompoundShape(body.shape).removeAllChildren();
-			}
-			removeBodyInC(body.pointer);
-
+		public function removeRigidBody(body : AWPRigidBody, cleanup:Boolean = false) : void {
 			if (m_nonStaticRigidBodies.indexOf(body) >= 0) {
 				m_nonStaticRigidBodies.splice(m_nonStaticRigidBodies.indexOf(body), 1);
 			}
 			if (m_rigidBodies.indexOf(body) >= 0) {
 				m_rigidBodies.splice(m_rigidBodies.indexOf(body), 1);
+				removeBodyInC(body.pointer);
+				
+				if (cleanup) {
+					body.dispose();
+				}
 			}
 			if(m_collisionObjects.hasOwnProperty(body.pointer.toString())){
 				delete m_collisionObjects[body.pointer.toString()];
@@ -157,21 +150,23 @@ package awayphysics.dynamics {
 		 * add a constraint to physics world
 		 */
 		public function addConstraint(constraint : AWPTypedConstraint, disableCollisionsBetweenLinkedBodies : Boolean = false) : void {
-			addConstraintInC(constraint.pointer, disableCollisionsBetweenLinkedBodies ? 1 : 0);
-			
 			if (m_constraints.indexOf(constraint) < 0) {
 				m_constraints.push(constraint);
+				addConstraintInC(constraint.pointer, disableCollisionsBetweenLinkedBodies ? 1 : 0);
 			}
 		}
 		
 		/**
-		 * remove a constraint from physics world
+		 * remove a constraint from physics world, if cleanup is true, release pointer in memory.
 		 */
-		public function removeConstraint(constraint : AWPTypedConstraint) : void {
-			removeConstraintInC(constraint.pointer);
-			
+		public function removeConstraint(constraint : AWPTypedConstraint, cleanup:Boolean = false) : void {
 			if (m_constraints.indexOf(constraint) >= 0) {
 				m_constraints.splice(m_constraints.indexOf(constraint), 1);
+				removeConstraintInC(constraint.pointer);
+				
+				if (cleanup) {
+					constraint.dispose();
+				}
 			}
 		}
 		
@@ -179,22 +174,24 @@ package awayphysics.dynamics {
 		 * add a vehicle to physics world
 		 */
 		public function addVehicle(vehicle : AWPRaycastVehicle) : void {
-			addVehicleInC(vehicle.pointer);
-
 			if (m_vehicles.indexOf(vehicle) < 0) {
 				m_vehicles.push(vehicle);
+				addVehicleInC(vehicle.pointer);
 			}
 		}
 		
 		/**
-		 * remove a vehicle from physics world
+		 * remove a vehicle from physics world, if cleanup is true, release pointer in memory.
 		 */
-		public function removeVehicle(vehicle : AWPRaycastVehicle) : void {
-			removeRigidBody(vehicle.getRigidBody());
-			removeVehicleInC(vehicle.pointer);
-
+		public function removeVehicle(vehicle : AWPRaycastVehicle, cleanup:Boolean = false) : void {
 			if (m_vehicles.indexOf(vehicle) >= 0) {
 				m_vehicles.splice(m_vehicles.indexOf(vehicle), 1);
+				removeVehicleInC(vehicle.pointer);
+				
+				if (cleanup) {
+					removeRigidBody(vehicle.getRigidBody(),cleanup);
+					vehicle.dispose();
+				}
 			}
 		}
 		
@@ -202,10 +199,9 @@ package awayphysics.dynamics {
 		 * add a character to physics world
 		 */
 		public function addCharacter(character : AWPKinematicCharacterController, group : int = 32, mask : int = -1) : void {
-			addCharacterInC(character.pointer, group, mask);
-
 			if (m_characters.indexOf(character) < 0) {
 				m_characters.push(character);
+				addCharacterInC(character.pointer, group, mask);
 			}
 			
 			if(!m_collisionObjects.hasOwnProperty(character.ghostObject.pointer.toString())){
@@ -214,19 +210,16 @@ package awayphysics.dynamics {
 		}
 		
 		/**
-		 * remove a character from physics world
+		 * remove a character from physics world, if cleanup is true, release pointer in memory.
 		 */
-		public function removeCharacter(character : AWPKinematicCharacterController) : void {
-			character.ghostObject.removeAllRays();
-			if(character.shape.shapeType==AWPCollisionShapeType.CONVEX_HULL_SHAPE){
-				AWPConvexHullShape(character.shape).deleteConvexHullShapeBuffer();
-			}else if(character.shape.shapeType==AWPCollisionShapeType.COMPOUND_SHAPE){
-				AWPCompoundShape(character.shape).removeAllChildren();
-			}
-			removeCharacterInC(character.pointer);
-
+		public function removeCharacter(character : AWPKinematicCharacterController, cleanup:Boolean = false) : void {
 			if (m_characters.indexOf(character) >= 0) {
 				m_characters.splice(m_characters.indexOf(character), 1);
+				removeCharacterInC(character.pointer);
+				
+				if (cleanup) {
+					character.dispose();
+				}
 			}
 			if(m_collisionObjects.hasOwnProperty(character.ghostObject.pointer.toString())){
 				delete m_collisionObjects[character.ghostObject.pointer.toString()];
@@ -234,41 +227,31 @@ package awayphysics.dynamics {
 		}
 		
 		/**
-		 * clear all objects from physics world
+		 * clear all objects from physics world, if cleanup is true, release pointer in memory.
 		 */
-		public function cleanWorld():void{
+		public function cleanWorld(cleanup:Boolean = false):void{
 			while (m_constraints.length > 0){
-				removeConstraint(m_constraints[0]);
+				removeConstraint(m_constraints[0],cleanup);
 			}
 			m_constraints.length = 0;
 			
 			while (m_vehicles.length > 0){
-				removeVehicle(m_vehicles[0]);
+				removeVehicle(m_vehicles[0],cleanup);
 			}
 			m_vehicles.length = 0;
 			
 			while (m_characters.length > 0){
-				removeCharacter(m_characters[0]);
+				removeCharacter(m_characters[0],cleanup);
 			}
 			m_characters.length = 0;
 			
 			while (m_rigidBodies.length > 0){
-				removeRigidBody(m_rigidBodies[0]);
+				removeRigidBody(m_rigidBodies[0],cleanup);
 			}
 			m_nonStaticRigidBodies.length = 0;
 			m_rigidBodies.length = 0;
 			
 			for each (var obj:AWPCollisionObject in m_collisionObjects) {
-				obj.removeAllRays();
-				if(obj.shape.shapeType==AWPCollisionShapeType.TRIANGLE_MESH_SHAPE){
-					AWPBvhTriangleMeshShape(obj.shape).deleteBvhTriangleMeshShapeBuffer();
-				}else if(obj.shape.shapeType==AWPCollisionShapeType.CONVEX_HULL_SHAPE){
-					AWPConvexHullShape(obj.shape).deleteConvexHullShapeBuffer();
-				}else if(obj.shape.shapeType==AWPCollisionShapeType.HEIGHT_FIELD_TERRAIN){
-					AWPHeightfieldTerrainShape(obj.shape).deleteHeightfieldTerrainShapeBuffer();
-				}else if(obj.shape.shapeType==AWPCollisionShapeType.COMPOUND_SHAPE){
-					AWPCompoundShape(obj.shape).removeAllChildren();
-				}
 				removeCollisionObjectInC(obj.pointer);
 			}
 			m_collisionObjects =  new Dictionary(true);

@@ -1,8 +1,8 @@
 package awayphysics.collision.shapes {
 	import flash.geom.Vector3D;
 	
-	import C_Run.createBoxShapeInC;
-	import com.adobe.alchemy.CModule;
+	import AWPC_Run.createBoxShapeInC;
+	import AWPC_Run.CModule;
 	
 	import awayphysics.math.AWPVector3;
 	

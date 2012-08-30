@@ -1,7 +1,9 @@
 package awayphysics.collision.dispatch {
-	import C_Run.addRayInC;
-	import C_Run.createCollisionObjectInC;
-	import C_Run.removeRayInC;
+	import AWPC_Run.addRayInC;
+	import AWPC_Run.createCollisionObjectInC;
+	import AWPC_Run.removeRayInC;
+	import AWPC_Run.disposeCollisionObjectInC;
+	import AWPC_Run.CModule;
 	
 	import away3d.containers.ObjectContainer3D;
 	
@@ -12,8 +14,6 @@ package awayphysics.collision.dispatch {
 	import awayphysics.math.AWPMath;
 	import awayphysics.math.AWPTransform;
 	import awayphysics.math.AWPVector3;
-	
-	import com.adobe.alchemy.CModule;
 	
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
@@ -42,6 +42,8 @@ package awayphysics.collision.dispatch {
 		public function AWPCollisionObject(shape : AWPCollisionShape, skin : ObjectContainer3D, ptr : uint = 0) {
 			m_shape = shape;
 			m_skin = skin;
+			
+			m_shape.retain();
 			
 			if(ptr>0){
 				pointer = ptr;
@@ -73,6 +75,15 @@ package awayphysics.collision.dispatch {
 		public function set skin(value:ObjectContainer3D):void {
 			m_skin = value;
 			_originScale.setTo(m_skin.scaleX, m_skin.scaleY, m_skin.scaleZ);
+		}
+		
+		public function dispose():void {
+			if (!_cleanup) {
+				_cleanup  = true;
+				removeAllRays();
+				m_shape.dispose();
+				disposeCollisionObjectInC(pointer);
+			}
 		}
 
 		/**

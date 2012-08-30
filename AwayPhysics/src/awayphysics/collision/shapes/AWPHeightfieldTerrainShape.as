@@ -1,8 +1,10 @@
 package awayphysics.collision.shapes {
-	import com.adobe.alchemy.CModule;
-	import C_Run.createHeightmapDataBufferInC;
-	import C_Run.removeHeightmapDataBufferInC;
-	import C_Run.createTerrainShapeInC;
+	import AWPC_Run.CModule;
+	import AWPC_Run.createHeightmapDataBufferInC;
+	import AWPC_Run.removeHeightmapDataBufferInC;
+	import AWPC_Run.createTerrainShapeInC;
+	import AWPC_Run.disposeCollisionShapeInC;
+	
 	import away3d.core.base.Geometry;
 	import awayphysics.extend.AWPTerrain;
 
@@ -28,11 +30,18 @@ package awayphysics.collision.shapes {
 			super(pointer, 10);
 		}
 
-		/**
-		 * release the heightmap data buffer
-		 */
-		public function deleteHeightfieldTerrainShapeBuffer() : void {
-			removeHeightmapDataBufferInC(dataPtr);
+		override public function dispose() : void {
+			m_counter--;
+			if (m_counter > 0) {
+				return;
+			}else {
+				m_counter = 0;
+			}
+			if (!_cleanup) {
+				_cleanup = true;
+				removeHeightmapDataBufferInC(dataPtr);
+				disposeCollisionShapeInC(pointer);
+			}
 		}
 		
 		public function get geometry():Geometry {

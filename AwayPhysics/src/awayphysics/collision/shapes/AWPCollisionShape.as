@@ -1,11 +1,10 @@
 package awayphysics.collision.shapes {
-	import com.adobe.alchemy.CModule;
-	import C_Run.setShapeScalingInC;
+	import AWPC_Run.CModule;
+	import AWPC_Run.setShapeScalingInC;
+	import AWPC_Run.disposeCollisionShapeInC;
 	
 	import awayphysics.AWPBase;
 	import awayphysics.math.AWPVector3;
-	
-	import com.adobe.alchemy.CModule;
 	
 	import flash.geom.Vector3D;
 	
@@ -13,6 +12,8 @@ package awayphysics.collision.shapes {
 		
 		protected var m_shapeType:int;
 		protected var m_localScaling:Vector3D;
+		
+		protected var m_counter:int = 0;
 		
 		public function AWPCollisionShape(ptr:uint, type:int) {
 			pointer = ptr;
@@ -39,6 +40,29 @@ package awayphysics.collision.shapes {
 				vec.v3d = scale;
 				setShapeScalingInC(pointer, vec.pointer);
 				CModule.free(vec.pointer);
+			}
+		}
+		
+		/**
+		 * this function just called by internal
+		 */
+		public function retain():void {
+			m_counter++;
+		}
+		
+		/**
+		 * this function just called by internal
+		 */
+		public function dispose():void {
+			m_counter--;
+			if (m_counter > 0) {
+				return;
+			}else {
+				m_counter = 0;
+			}
+			if (!_cleanup) {
+				_cleanup  = true;
+				disposeCollisionShapeInC(pointer);
 			}
 		}
 	}

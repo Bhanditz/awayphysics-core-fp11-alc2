@@ -1,7 +1,7 @@
 package awayphysics.dynamics.constraintsolver {
-	import com.adobe.alchemy.CModule;
-	import C_Run.createP2PConstraint1InC;
-	import C_Run.createP2PConstraint2InC;
+	import AWPC_Run.CModule;
+	import AWPC_Run.createP2PConstraint1InC;
+	import AWPC_Run.createP2PConstraint2InC;
 	import awayphysics.dynamics.AWPRigidBody;
 	import awayphysics.math.AWPVector3;
 

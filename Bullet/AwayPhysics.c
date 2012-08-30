@@ -1,12 +1,13 @@
 
 /*
-compile: g++ -I./ AwayPhysics.c libbulletdynamics.a libbulletcollision.a libbulletmath.a -emit-swc -O4 -Wall -o AwayPhysics.swc
+compile: g++ -I./ AwayPhysics.c libbulletdynamics.a libbulletcollision.a libbulletmath.a -emit-swc=AWPC_Run -O4 -falcon -fno-exceptions -Wall -o AwayPhysics.swc
+
 */
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <vector>
-#include "AS3.h"
+#include "AS3/AS3.h"
 #include "btBulletDynamicsCommon.h"
 #include "BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h"
 #include "BulletCollision/CollisionDispatch/btGhostObject.h"
@@ -29,12 +30,12 @@ struct RayInfo
 };
 btAlignedObjectArray<RayInfo*> rays;
 
-void vector3() __attribute__((used, annotate("as3sig:public function vector3():uint")));
+void vector3() __attribute__((used, annotate("as3sig:public function vector3():uint"), annotate("as3package:AWPC_Run")));
 void vector3() {
 	btVector3* vect = new btVector3();
 	AS3_Return(vect);
 }
-void matrix3x3() __attribute__((used, annotate("as3sig:public function matrix3x3():uint")));
+void matrix3x3() __attribute__((used, annotate("as3sig:public function matrix3x3():uint"), annotate("as3package:AWPC_Run")));
 void matrix3x3() {
 	btMatrix3x3* mat = new btMatrix3x3();
 	AS3_Return(mat);
@@ -43,7 +44,7 @@ void matrix3x3() {
 btCollisionWorld* collisionWorld;
 
 /// create the discrete dynamics world with btDbvtBroadphase
-void createDiscreteDynamicsWorldWithDbvtInC() __attribute__((used, annotate("as3sig:public function createDiscreteDynamicsWorldWithDbvtInC():uint")));
+void createDiscreteDynamicsWorldWithDbvtInC() __attribute__((used, annotate("as3sig:public function createDiscreteDynamicsWorldWithDbvtInC():uint"), annotate("as3package:AWPC_Run")));
 void createDiscreteDynamicsWorldWithDbvtInC() {
 	btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
 	btCollisionDispatcher* dispatcher = new	btCollisionDispatcher(collisionConfiguration);
@@ -57,12 +58,12 @@ void createDiscreteDynamicsWorldWithDbvtInC() {
 }
 
 /// create the discrete dynamics world with btAxisSweep3
-void createDiscreteDynamicsWorldWithAxisSweep3InC() __attribute__((used, annotate("as3sig:public function createDiscreteDynamicsWorldWithAxisSweep3InC(as3_worldMin:uint,as3_worldMax:uint):uint")));
+void createDiscreteDynamicsWorldWithAxisSweep3InC() __attribute__((used, annotate("as3sig:public function createDiscreteDynamicsWorldWithAxisSweep3InC(as3_worldMin:uint,as3_worldMax:uint):uint"), annotate("as3package:AWPC_Run")));
 void createDiscreteDynamicsWorldWithAxisSweep3InC() {
 	btVector3* worldMin;
 	btVector3* worldMax;
-	AS3_CopyAS3ToC(as3_worldMin,worldMin);
-	AS3_CopyAS3ToC(as3_worldMax,worldMax);
+	AS3_GetScalarFromVar(worldMin, as3_worldMin);
+	AS3_GetScalarFromVar(worldMax, as3_worldMax);
 
 	btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
 	btCollisionDispatcher* dispatcher = new	btCollisionDispatcher(collisionConfiguration);
@@ -76,13 +77,19 @@ void createDiscreteDynamicsWorldWithAxisSweep3InC() {
 	AS3_Return(collisionWorld);
 }
 
+void disposeDynamicsWorldInC() __attribute__((used, annotate("as3sig:public function disposeDynamicsWorldInC():uint"), annotate("as3package:AWPC_Run")));
+void disposeDynamicsWorldInC() {
+	delete collisionWorld;
+	AS3_Return(0);
+}
+
 // create a static plane shape
-void createStaticPlaneShapeInC() __attribute__((used, annotate("as3sig:public function createStaticPlaneShapeInC(as3_normal:uint,as3_constant:Number):uint")));
+void createStaticPlaneShapeInC() __attribute__((used, annotate("as3sig:public function createStaticPlaneShapeInC(as3_normal:uint,as3_constant:Number):uint"), annotate("as3package:AWPC_Run")));
 void createStaticPlaneShapeInC(){
 	btVector3* normal;
 	float constant;
-	AS3_CopyAS3ToC(as3_normal,normal);
-	AS3_CopyAS3ToC(as3_constant,constant);
+	AS3_GetScalarFromVar(normal, as3_normal);
+	AS3_GetScalarFromVar(constant, as3_constant);
 	
 	btCollisionShape* shape = new btStaticPlaneShape(*normal,constant);
 
@@ -90,10 +97,10 @@ void createStaticPlaneShapeInC(){
 }
 
 // create a cube
-void createBoxShapeInC() __attribute__((used, annotate("as3sig:public function createBoxShapeInC(as3_extents:uint):uint")));
+void createBoxShapeInC() __attribute__((used, annotate("as3sig:public function createBoxShapeInC(as3_extents:uint):uint"), annotate("as3package:AWPC_Run")));
 void createBoxShapeInC(){
 	btVector3* extents;
-	AS3_CopyAS3ToC(as3_extents,extents);
+	AS3_GetScalarFromVar(extents, as3_extents);
 
 	btCollisionShape* shape = new btBoxShape(btVector3(extents->m_floats[0]/2,extents->m_floats[1]/2,extents->m_floats[2]/2));
 
@@ -101,10 +108,10 @@ void createBoxShapeInC(){
 }
 
 // create a sphere
-void createSphereShapeInC() __attribute__((used, annotate("as3sig:public function createSphereShapeInC(as3_radius:Number):uint")));
+void createSphereShapeInC() __attribute__((used, annotate("as3sig:public function createSphereShapeInC(as3_radius:Number):uint"), annotate("as3package:AWPC_Run")));
 void createSphereShapeInC(){
 	float radius;
-	AS3_CopyAS3ToC(as3_radius,radius);
+	AS3_GetScalarFromVar(radius, as3_radius);
 
 	btCollisionShape* shape =  new btSphereShape(radius);
 
@@ -112,10 +119,10 @@ void createSphereShapeInC(){
 }
 
 // create a cylinder
-void createCylinderShapeInC() __attribute__((used, annotate("as3sig:public function createCylinderShapeInC(as3_extents:uint):uint")));
+void createCylinderShapeInC() __attribute__((used, annotate("as3sig:public function createCylinderShapeInC(as3_extents:uint):uint"), annotate("as3package:AWPC_Run")));
 void createCylinderShapeInC(){
 	btVector3* extents;
-	AS3_CopyAS3ToC(as3_extents,extents);
+	AS3_GetScalarFromVar(extents, as3_extents);
 
 	btCollisionShape* shape =  new btCylinderShape(btVector3(extents->m_floats[0]/2,extents->m_floats[1]/2,extents->m_floats[2]/2));
 	
@@ -123,11 +130,11 @@ void createCylinderShapeInC(){
 }
 
 // create a capsule
-void createCapsuleShapeInC() __attribute__((used, annotate("as3sig:public function createCapsuleShapeInC(as3_radius:Number,as3_height:Number):uint")));
+void createCapsuleShapeInC() __attribute__((used, annotate("as3sig:public function createCapsuleShapeInC(as3_radius:Number,as3_height:Number):uint"), annotate("as3package:AWPC_Run")));
 void createCapsuleShapeInC(){
 	float radius,height;
-	AS3_CopyAS3ToC(as3_radius,radius);
-	AS3_CopyAS3ToC(as3_height,height);
+	AS3_GetScalarFromVar(radius, as3_radius);
+	AS3_GetScalarFromVar(height, as3_height);
 	
 	btCollisionShape* shape =  new btCapsuleShape(radius,height);
 	
@@ -135,11 +142,11 @@ void createCapsuleShapeInC(){
 }
 
 // create a cone
-void createConeShapeInC() __attribute__((used, annotate("as3sig:public function createConeShapeInC(as3_radius:Number,as3_height:Number):uint")));
+void createConeShapeInC() __attribute__((used, annotate("as3sig:public function createConeShapeInC(as3_radius:Number,as3_height:Number):uint"), annotate("as3package:AWPC_Run")));
 void createConeShapeInC(){
 	float radius,height;
-	AS3_CopyAS3ToC(as3_radius,radius);
-	AS3_CopyAS3ToC(as3_height,height);
+	AS3_GetScalarFromVar(radius, as3_radius);
+	AS3_GetScalarFromVar(height, as3_height);
 	
 	btCollisionShape* shape =  new btConeShape(radius,height);
 	
@@ -147,7 +154,7 @@ void createConeShapeInC(){
 }
 
 // create a compound shape
-void createCompoundShapeInC() __attribute__((used, annotate("as3sig:public function createCompoundShapeInC():uint")));
+void createCompoundShapeInC() __attribute__((used, annotate("as3sig:public function createCompoundShapeInC():uint"), annotate("as3package:AWPC_Run")));
 void createCompoundShapeInC(){
 
 	btCollisionShape* shape =  new btCompoundShape();
@@ -156,17 +163,17 @@ void createCompoundShapeInC(){
 }
 
 //add a child shape to compound shape
-void addCompoundChildInC() __attribute__((used, annotate("as3sig:public function addCompoundChildInC(as3_cshape:uint,as3_shape:uint,as3_pos:uint,as3_col:uint):uint")));
+void addCompoundChildInC() __attribute__((used, annotate("as3sig:public function addCompoundChildInC(as3_cshape:uint,as3_shape:uint,as3_pos:uint,as3_col:uint):uint"), annotate("as3package:AWPC_Run")));
 void addCompoundChildInC(){
 	btCompoundShape* cshape;
 	btCollisionShape* shape;
 	btVector3* pos;
 	btMatrix3x3* col;
 	
-	AS3_CopyAS3ToC(as3_cshape,cshape);
-	AS3_CopyAS3ToC(as3_shape,shape);
-	AS3_CopyAS3ToC(as3_pos,pos);
-	AS3_CopyAS3ToC(as3_col,col);
+	AS3_GetScalarFromVar(cshape, as3_cshape);
+	AS3_GetScalarFromVar(shape, as3_shape);
+	AS3_GetScalarFromVar(pos, as3_pos);
+	AS3_GetScalarFromVar(col, as3_col);
 
 	btTransform localTrans;
 	localTrans.setIdentity();
@@ -179,12 +186,12 @@ void addCompoundChildInC(){
 }
 
 //remove a child shape from compound shape by index
-void removeCompoundChildInC() __attribute__((used, annotate("as3sig:public function removeCompoundChildInC(as3_cshape:uint,as3_index:int):uint")));
+void removeCompoundChildInC() __attribute__((used, annotate("as3sig:public function removeCompoundChildInC(as3_cshape:uint,as3_index:int):uint"), annotate("as3package:AWPC_Run")));
 void removeCompoundChildInC(){
 	btCompoundShape* cshape;
 	int index;
-	AS3_CopyAS3ToC(as3_cshape,cshape);
-	AS3_CopyAS3ToC(as3_index,index);
+	AS3_GetScalarFromVar(cshape, as3_cshape);
+	AS3_GetScalarFromVar(index, as3_index);
 	
 	cshape->removeChildShapeByIndex(index);
 
@@ -192,41 +199,41 @@ void removeCompoundChildInC(){
 	AS3_Return(0);
 }
 
-void createHeightmapDataBufferInC() __attribute__((used, annotate("as3sig:public function createHeightmapDataBufferInC(as3_size:int):uint")));
+void createHeightmapDataBufferInC() __attribute__((used, annotate("as3sig:public function createHeightmapDataBufferInC(as3_size:int):uint"), annotate("as3package:AWPC_Run")));
 void createHeightmapDataBufferInC(){
 	int size;
-	AS3_CopyAS3ToC(as3_size,size);
+	AS3_GetScalarFromVar(size, as3_size);
 
 	btScalar* heightmapData = new btScalar[size];
 
 	AS3_Return(heightmapData);
 }
 
-void removeHeightmapDataBufferInC() __attribute__((used, annotate("as3sig:public function removeHeightmapDataBufferInC(as3_heightmapData:uint):uint")));
+void removeHeightmapDataBufferInC() __attribute__((used, annotate("as3sig:public function removeHeightmapDataBufferInC(as3_heightmapData:uint):uint"), annotate("as3package:AWPC_Run")));
 void removeHeightmapDataBufferInC(){
 	btScalar* heightmapData;
-	AS3_CopyAS3ToC(as3_heightmapData,heightmapData);
+	AS3_GetScalarFromVar(heightmapData, as3_heightmapData);
 
 	delete [] heightmapData;
 
 	AS3_Return(0);
 }
 
-void createTerrainShapeInC() __attribute__((used, annotate("as3sig:public function createTerrainShapeInC(as3_heightmapData:uint,as3_sw:int,as3_sh:int,as3_width:Number,as3_length:Number,as3_heightScale:Number,as3_minHeight:Number,as3_maxHeight:Number,as3_flipQuadEdges:int):uint")));
+void createTerrainShapeInC() __attribute__((used, annotate("as3sig:public function createTerrainShapeInC(as3_heightmapData:uint,as3_sw:int,as3_sh:int,as3_width:Number,as3_length:Number,as3_heightScale:Number,as3_minHeight:Number,as3_maxHeight:Number,as3_flipQuadEdges:int):uint"), annotate("as3package:AWPC_Run")));
 void createTerrainShapeInC(){
 	btScalar* heightmapData;
 	int sw,sh,flipQuadEdges;
 	float width,length,heightScale,minHeight,maxHeight;
 	
-	AS3_CopyAS3ToC(as3_heightmapData,heightmapData);
-	AS3_CopyAS3ToC(as3_sw,sw);
-	AS3_CopyAS3ToC(as3_sh,sh);
-	AS3_CopyAS3ToC(as3_flipQuadEdges,flipQuadEdges);
-	AS3_CopyAS3ToC(as3_width,width);
-	AS3_CopyAS3ToC(as3_length,length);
-	AS3_CopyAS3ToC(as3_heightScale,heightScale);
-	AS3_CopyAS3ToC(as3_minHeight,minHeight);
-	AS3_CopyAS3ToC(as3_maxHeight,maxHeight);
+	AS3_GetScalarFromVar(heightmapData, as3_heightmapData);
+	AS3_GetScalarFromVar(sw, as3_sw);
+	AS3_GetScalarFromVar(sh, as3_sh);
+	AS3_GetScalarFromVar(flipQuadEdges, as3_flipQuadEdges);
+	AS3_GetScalarFromVar(width, as3_width);
+	AS3_GetScalarFromVar(length, as3_length);
+	AS3_GetScalarFromVar(heightScale, as3_heightScale);
+	AS3_GetScalarFromVar(minHeight, as3_minHeight);
+	AS3_GetScalarFromVar(maxHeight, as3_maxHeight);
 
 	btHeightfieldTerrainShape* heightFieldShape = new btHeightfieldTerrainShape(sw,sh,heightmapData, heightScale,minHeight, maxHeight,1, PHY_FLOAT,flipQuadEdges==1);
 	heightFieldShape->setUseDiamondSubdivision(true);
@@ -235,56 +242,56 @@ void createTerrainShapeInC(){
 	AS3_Return(heightFieldShape);
 }
 
-void createTriangleIndexDataBufferInC() __attribute__((used, annotate("as3sig:public function createTriangleIndexDataBufferInC(as3_size:int):uint")));
+void createTriangleIndexDataBufferInC() __attribute__((used, annotate("as3sig:public function createTriangleIndexDataBufferInC(as3_size:int):uint"), annotate("as3package:AWPC_Run")));
 void createTriangleIndexDataBufferInC(){
 	int size;
-	AS3_CopyAS3ToC(as3_size,size);
+	AS3_GetScalarFromVar(size, as3_size);
 
 	int* indexData = new int[size];
 
 	AS3_Return(indexData);
 }
 
-void removeTriangleIndexDataBufferInC() __attribute__((used, annotate("as3sig:public function removeTriangleIndexDataBufferInC(as3_indexData:uint):uint")));
+void removeTriangleIndexDataBufferInC() __attribute__((used, annotate("as3sig:public function removeTriangleIndexDataBufferInC(as3_indexData:uint):uint"), annotate("as3package:AWPC_Run")));
 void removeTriangleIndexDataBufferInC(){
 	int* indexData;
-	AS3_CopyAS3ToC(as3_indexData,indexData);
+	AS3_GetScalarFromVar(indexData, as3_indexData);
 
 	delete [] indexData;
 
 	AS3_Return(0);
 }
 
-void createTriangleVertexDataBufferInC() __attribute__((used, annotate("as3sig:public function createTriangleVertexDataBufferInC(as3_size:int):uint")));
+void createTriangleVertexDataBufferInC() __attribute__((used, annotate("as3sig:public function createTriangleVertexDataBufferInC(as3_size:int):uint"), annotate("as3package:AWPC_Run")));
 void createTriangleVertexDataBufferInC(){
 	int size;
-	AS3_CopyAS3ToC(as3_size,size);
+	AS3_GetScalarFromVar(size, as3_size);
 
 	btScalar* vertexData = new btScalar[size];
 
 	AS3_Return(vertexData);
 }
 
-void removeTriangleVertexDataBufferInC() __attribute__((used, annotate("as3sig:public function removeTriangleVertexDataBufferInC(as3_vertexData:uint):uint")));
+void removeTriangleVertexDataBufferInC() __attribute__((used, annotate("as3sig:public function removeTriangleVertexDataBufferInC(as3_vertexData:uint):uint"), annotate("as3package:AWPC_Run")));
 void removeTriangleVertexDataBufferInC(){
 	btScalar* vertexData;
-	AS3_CopyAS3ToC(as3_vertexData,vertexData);
+	AS3_GetScalarFromVar(vertexData, as3_vertexData);
 
 	delete [] vertexData;
 
 	AS3_Return(0);
 }
 
-void createTriangleIndexVertexArrayInC() __attribute__((used, annotate("as3sig:public function createTriangleIndexVertexArrayInC(as3_numTriangles:int,as3_indexBase:uint,as3_numVertices:int,as3_vertexBase:uint):uint")));
+void createTriangleIndexVertexArrayInC() __attribute__((used, annotate("as3sig:public function createTriangleIndexVertexArrayInC(as3_numTriangles:int,as3_indexBase:uint,as3_numVertices:int,as3_vertexBase:uint):uint"), annotate("as3package:AWPC_Run")));
 void createTriangleIndexVertexArrayInC(){
 	int numTriangles;
 	int* indexBase;
 	int numVertices;
 	btScalar* vertexBase;
-	AS3_CopyAS3ToC(as3_numTriangles,numTriangles);
-	AS3_CopyAS3ToC(as3_indexBase,indexBase);
-	AS3_CopyAS3ToC(as3_numVertices,numVertices);
-	AS3_CopyAS3ToC(as3_vertexBase,vertexBase);
+	AS3_GetScalarFromVar(numTriangles, as3_numTriangles);
+	AS3_GetScalarFromVar(indexBase, as3_indexBase);
+	AS3_GetScalarFromVar(numVertices, as3_numVertices);
+	AS3_GetScalarFromVar(vertexBase, as3_vertexBase);
 
 	int indexStride = 3*sizeof(int);
 	int vertStride = 3*sizeof(btScalar);
@@ -294,26 +301,26 @@ void createTriangleIndexVertexArrayInC(){
 	AS3_Return(indexVertexArrays);
 }
 
-void createBvhTriangleMeshShapeInC() __attribute__((used, annotate("as3sig:public function createBvhTriangleMeshShapeInC(as3_indexVertexArrays:uint,as3_useQuantizedAabbCompression:int,as3_buildBvh:int):uint")));
+void createBvhTriangleMeshShapeInC() __attribute__((used, annotate("as3sig:public function createBvhTriangleMeshShapeInC(as3_indexVertexArrays:uint,as3_useQuantizedAabbCompression:int,as3_buildBvh:int):uint"), annotate("as3package:AWPC_Run")));
 void createBvhTriangleMeshShapeInC(){
 	btTriangleIndexVertexArray* indexVertexArrays;
 	int useQuantizedAabbCompression;
 	int buildBvh;
-	AS3_CopyAS3ToC(as3_indexVertexArrays,indexVertexArrays);
-	AS3_CopyAS3ToC(as3_useQuantizedAabbCompression,useQuantizedAabbCompression);
-	AS3_CopyAS3ToC(as3_buildBvh,buildBvh);
+	AS3_GetScalarFromVar(indexVertexArrays, as3_indexVertexArrays);
+	AS3_GetScalarFromVar(useQuantizedAabbCompression, as3_useQuantizedAabbCompression);
+	AS3_GetScalarFromVar(buildBvh, as3_buildBvh);
 
 	btBvhTriangleMeshShape* bvhTriangleMesh=new btBvhTriangleMeshShape(indexVertexArrays,useQuantizedAabbCompression==1,buildBvh==1);
 
 	AS3_Return(bvhTriangleMesh);
 }
 
-void createConvexHullShapeInC() __attribute__((used, annotate("as3sig:public function createConvexHullShapeInC(as3_numPoints:int,as3_points:uint):uint")));
+void createConvexHullShapeInC() __attribute__((used, annotate("as3sig:public function createConvexHullShapeInC(as3_numPoints:int,as3_points:uint):uint"), annotate("as3package:AWPC_Run")));
 void createConvexHullShapeInC(){
 	int numPoints;
 	btScalar* points;
-	AS3_CopyAS3ToC(as3_numPoints,numPoints);
-	AS3_CopyAS3ToC(as3_points,points);
+	AS3_GetScalarFromVar(numPoints, as3_numPoints);
+	AS3_GetScalarFromVar(points, as3_points);
 
 	btConvexHullShape* convexHullShape=new btConvexHullShape(points, numPoints, sizeof(btScalar) * 3);
 
@@ -323,7 +330,7 @@ void createConvexHullShapeInC(){
 void createGImpactMeshShapeInC() __attribute__((used, annotate("as3sig:public function createGImpactMeshShapeInC(as3_indexVertexArrays:uint):uint")));
 void createGImpactMeshShapeInC(){
 	btTriangleIndexVertexArray* indexVertexArrays;
-	AS3_CopyAS3ToC(as3_indexVertexArrays,indexVertexArrays);
+	AS3_GetScalarFromVar(indexVertexArrays, as3_indexVertexArrays);
 
 	btGImpactMeshShape* gimpactMesh = new btGImpactMeshShape(indexVertexArrays);
 	gimpactMesh->updateBound();
@@ -334,83 +341,91 @@ void createGImpactMeshShapeInC(){
 	AS3_Return(gimpactMesh);
 }
 */
-void createTriangleShapeInC() __attribute__((used, annotate("as3sig:public function createTriangleShapeInC(as3_p0:uint,as3_p1:uint,as3_p2:uint):uint")));
+void createTriangleShapeInC() __attribute__((used, annotate("as3sig:public function createTriangleShapeInC(as3_p0:uint,as3_p1:uint,as3_p2:uint):uint"), annotate("as3package:AWPC_Run")));
 void createTriangleShapeInC(){
 	btVector3* p0;
 	btVector3* p1;
 	btVector3* p2;
-	AS3_CopyAS3ToC(as3_p0,p0);
-	AS3_CopyAS3ToC(as3_p1,p1);
-	AS3_CopyAS3ToC(as3_p2,p2);
+	AS3_GetScalarFromVar(p0, as3_p0);
+	AS3_GetScalarFromVar(p1, as3_p1);
+	AS3_GetScalarFromVar(p2, as3_p2);
 
 	btTriangleShapeEx* triangleShape=new btTriangleShapeEx(*p0,*p1,*p2);
 
 	AS3_Return(triangleShape);
 }
 
-void setShapeScalingInC() __attribute__((used, annotate("as3sig:public function setShapeScalingInC(as3_shape:uint,as3_scale:uint):uint")));
+void disposeCollisionShapeInC() __attribute__((used, annotate("as3sig:public function disposeCollisionShapeInC(as3_shape:uint):uint"), annotate("as3package:AWPC_Run")));
+void disposeCollisionShapeInC(){
+	btCollisionShape* shape;
+	AS3_GetScalarFromVar(shape, as3_shape);
+	delete shape;
+	AS3_Return(0);
+}
+
+void setShapeScalingInC() __attribute__((used, annotate("as3sig:public function setShapeScalingInC(as3_shape:uint,as3_scale:uint):uint"), annotate("as3package:AWPC_Run")));
 void setShapeScalingInC(){
 	btCollisionShape* shape;
 	btVector3* scale;
-	AS3_CopyAS3ToC(as3_shape,shape);
-	AS3_CopyAS3ToC(as3_scale,scale);
+	AS3_GetScalarFromVar(shape, as3_shape);
+	AS3_GetScalarFromVar(scale, as3_scale);
 	
 	shape->setLocalScaling(*scale);
 
 	AS3_Return(0);
 }
 
-void createCollisionObjectInC() __attribute__((used, annotate("as3sig:public function createCollisionObjectInC(as3_shape:uint):uint")));
+void createCollisionObjectInC() __attribute__((used, annotate("as3sig:public function createCollisionObjectInC(as3_shape:uint):uint"), annotate("as3package:AWPC_Run")));
 void createCollisionObjectInC(){
 	btCollisionShape* shape;
-	AS3_CopyAS3ToC(as3_shape,shape);
+	AS3_GetScalarFromVar(shape, as3_shape);
 	
 	btCollisionObject* obj = new btCollisionObject();
 	obj->setCollisionShape(shape);
 	
 	AS3_Return(obj);
 }
-void addCollisionObjectInC() __attribute__((used, annotate("as3sig:public function addCollisionObjectInC(as3_obj:uint,as3_group:int,as3_mask:int):uint")));
+void addCollisionObjectInC() __attribute__((used, annotate("as3sig:public function addCollisionObjectInC(as3_obj:uint,as3_group:int,as3_mask:int):uint"), annotate("as3package:AWPC_Run")));
 void addCollisionObjectInC(){
 	btCollisionObject* obj;
 	int group;
 	int mask;
-	AS3_CopyAS3ToC(as3_obj,obj);
-	AS3_CopyAS3ToC(as3_group,group);
-	AS3_CopyAS3ToC(as3_mask,mask);
+	AS3_GetScalarFromVar(obj, as3_obj);
+	AS3_GetScalarFromVar(group, as3_group);
+	AS3_GetScalarFromVar(mask, as3_mask);
 
 	collisionWorld->addCollisionObject(obj,group,mask);
 	
 	AS3_Return(0);
 }
-void removeCollisionObjectInC() __attribute__((used, annotate("as3sig:public function removeCollisionObjectInC(as3_obj:uint):uint")));
+void removeCollisionObjectInC() __attribute__((used, annotate("as3sig:public function removeCollisionObjectInC(as3_obj:uint):uint"), annotate("as3package:AWPC_Run")));
 void removeCollisionObjectInC(){
 	btCollisionObject* obj;
-	AS3_CopyAS3ToC(as3_obj,obj);
+	AS3_GetScalarFromVar(obj, as3_obj);
 
 	collisionWorld->removeCollisionObject(obj);
 
 	AS3_Return(0);
 }
 
-void addRayInC() __attribute__((used, annotate("as3sig:public function addRayInC(as3_obj:uint,as3_from:uint,as3_to:uint):uint")));
+void addRayInC() __attribute__((used, annotate("as3sig:public function addRayInC(as3_obj:uint,as3_from:uint,as3_to:uint):uint"), annotate("as3package:AWPC_Run")));
 void addRayInC(){
 	btCollisionObject* obj;
 	btVector3* from;
 	btVector3* to;
-	AS3_CopyAS3ToC(as3_obj,obj);
-	AS3_CopyAS3ToC(as3_from,from);
-	AS3_CopyAS3ToC(as3_to,to);
+	AS3_GetScalarFromVar(obj, as3_obj);
+	AS3_GetScalarFromVar(from, as3_from);
+	AS3_GetScalarFromVar(to, as3_to);
 	
 	RayInfo* ray=new RayInfo(obj,*from,*to);
 	rays.push_back(ray);
 	
 	AS3_Return(ray);
 }
-void removeRayInC() __attribute__((used, annotate("as3sig:public function removeRayInC(as3_ray:uint):uint")));
+void removeRayInC() __attribute__((used, annotate("as3sig:public function removeRayInC(as3_ray:uint):uint"), annotate("as3package:AWPC_Run")));
 void removeRayInC(){
 	RayInfo* ray;
-	AS3_CopyAS3ToC(as3_ray,ray);
+	AS3_GetScalarFromVar(ray, as3_ray);
 	
 	rays.remove(ray);
 	
@@ -421,13 +436,13 @@ void removeRayInC(){
 }
 
 // create rigidbody
-void createBodyInC() __attribute__((used, annotate("as3sig:public function createBodyInC(as3_shape:uint,as3_mass:Number):uint")));
+void createBodyInC() __attribute__((used, annotate("as3sig:public function createBodyInC(as3_shape:uint,as3_mass:Number):uint"), annotate("as3package:AWPC_Run")));
 void createBodyInC(){
 	btCollisionShape* shape;
 	float mass;
 	
-	AS3_CopyAS3ToC(as3_shape,shape);
-	AS3_CopyAS3ToC(as3_mass,mass);
+	AS3_GetScalarFromVar(shape, as3_shape);
+	AS3_GetScalarFromVar(mass, as3_mass);
 	
 	//rigidbody is dynamic if and only if mass is non zero, otherwise static
 	bool isDynamic = (mass != 0.f);
@@ -443,12 +458,12 @@ void createBodyInC(){
 	AS3_Return(body);
 }
 
-void setBodyMassInC() __attribute__((used, annotate("as3sig:public function setBodyMassInC(as3_body:uint,as3_mass:Number):uint")));
+void setBodyMassInC() __attribute__((used, annotate("as3sig:public function setBodyMassInC(as3_body:uint,as3_mass:Number):uint"), annotate("as3package:AWPC_Run")));
 void setBodyMassInC(){
 	btRigidBody* body;
 	float mass;
-	AS3_CopyAS3ToC(as3_body,body);
-	AS3_CopyAS3ToC(as3_mass,mass);	
+	AS3_GetScalarFromVar(body, as3_body);
+	AS3_GetScalarFromVar(mass, as3_mass);	
 	
 	
 	btCollisionShape* shape=body->getCollisionShape();
@@ -475,10 +490,10 @@ void setBodyMassInC(){
 }
 
 //add the body to the dynamics world
-void addBodyInC() __attribute__((used, annotate("as3sig:public function addBodyInC(as3_body:uint):uint")));
+void addBodyInC() __attribute__((used, annotate("as3sig:public function addBodyInC(as3_body:uint):uint"), annotate("as3package:AWPC_Run")));
 void addBodyInC(){
 	btRigidBody* body;
-	AS3_CopyAS3ToC(as3_body,body);
+	AS3_GetScalarFromVar(body, as3_body);
 
 	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->addRigidBody(body);
@@ -487,14 +502,14 @@ void addBodyInC(){
 }
 
 //add a body to the dynamics world with group and mask
-void addBodyWithGroupInC() __attribute__((used, annotate("as3sig:public function addBodyWithGroupInC(as3_body:uint,as3_group:int,as3_mask:int):uint")));
+void addBodyWithGroupInC() __attribute__((used, annotate("as3sig:public function addBodyWithGroupInC(as3_body:uint,as3_group:int,as3_mask:int):uint"), annotate("as3package:AWPC_Run")));
 void addBodyWithGroupInC(){
 	btRigidBody* body;
 	int group;
 	int mask;
-	AS3_CopyAS3ToC(as3_body,body);
-	AS3_CopyAS3ToC(as3_group,group);
-	AS3_CopyAS3ToC(as3_mask,mask);
+	AS3_GetScalarFromVar(body, as3_body);
+	AS3_GetScalarFromVar(group, as3_group);
+	AS3_GetScalarFromVar(mask, as3_mask);
 
 	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->addRigidBody(body,group,mask);
@@ -503,10 +518,10 @@ void addBodyWithGroupInC(){
 }
 
 /// remove rigidbody
-void removeBodyInC() __attribute__((used, annotate("as3sig:public function removeBodyInC(as3_body:uint):uint")));
+void removeBodyInC() __attribute__((used, annotate("as3sig:public function removeBodyInC(as3_body:uint):uint"), annotate("as3package:AWPC_Run")));
 void removeBodyInC(){
 	btRigidBody* body;
-	AS3_CopyAS3ToC(as3_body,body);
+	AS3_GetScalarFromVar(body, as3_body);
 
 	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->removeRigidBody(body);
@@ -515,13 +530,23 @@ void removeBodyInC(){
 	AS3_Return(0);
 }
 
+void disposeCollisionObjectInC() __attribute__((used, annotate("as3sig:public function disposeCollisionObjectInC(as3_obj:uint):uint"), annotate("as3package:AWPC_Run")));
+void disposeCollisionObjectInC(){
+	btCollisionObject* obj;
+	AS3_GetScalarFromVar(obj, as3_obj);
+
+	delete obj;
+	
+	AS3_Return(0);
+}
+
 //create a btPoint2PointConstraint with one rigidbody
-void createP2PConstraint1InC() __attribute__((used, annotate("as3sig:public function createP2PConstraint1InC(as3_bodyA:uint,as3_pivotInA:uint):uint")));
+void createP2PConstraint1InC() __attribute__((used, annotate("as3sig:public function createP2PConstraint1InC(as3_bodyA:uint,as3_pivotInA:uint):uint"), annotate("as3package:AWPC_Run")));
 void createP2PConstraint1InC(){
 	btRigidBody* bodyA;
 	btVector3* pivotInA;
-	AS3_CopyAS3ToC(as3_bodyA,bodyA);
-	AS3_CopyAS3ToC(as3_pivotInA,pivotInA);
+	AS3_GetScalarFromVar(bodyA, as3_bodyA);
+	AS3_GetScalarFromVar(pivotInA, as3_pivotInA);
 
 	btPoint2PointConstraint* p2p = new btPoint2PointConstraint(*bodyA,*pivotInA);
 
@@ -529,39 +554,39 @@ void createP2PConstraint1InC(){
 }
 
 //create a btPoint2PointConstraint between tow rigidbodies
-void createP2PConstraint2InC() __attribute__((used, annotate("as3sig:public function createP2PConstraint2InC(as3_bodyA:uint,as3_bodyB:uint,as3_pivotInA:uint,as3_pivotInB:uint):uint")));
+void createP2PConstraint2InC() __attribute__((used, annotate("as3sig:public function createP2PConstraint2InC(as3_bodyA:uint,as3_bodyB:uint,as3_pivotInA:uint,as3_pivotInB:uint):uint"), annotate("as3package:AWPC_Run")));
 void createP2PConstraint2InC(){
 	btRigidBody* bodyA;
 	btRigidBody* bodyB;
 	btVector3* pivotInA;
 	btVector3* pivotInB;
-	AS3_CopyAS3ToC(as3_bodyA,bodyA);
-	AS3_CopyAS3ToC(as3_bodyB,bodyB);
-	AS3_CopyAS3ToC(as3_pivotInA,pivotInA);
-	AS3_CopyAS3ToC(as3_pivotInB,pivotInB);
+	AS3_GetScalarFromVar(bodyA, as3_bodyA);
+	AS3_GetScalarFromVar(bodyB, as3_bodyB);
+	AS3_GetScalarFromVar(pivotInA, as3_pivotInA);
+	AS3_GetScalarFromVar(pivotInB, as3_pivotInB);
 
 	btPoint2PointConstraint* p2p = new btPoint2PointConstraint(*bodyA,*bodyB,*pivotInA,*pivotInB);
 
 	AS3_Return(p2p);
 }
 
-void createHingeConstraint1InC() __attribute__((used, annotate("as3sig:public function createHingeConstraint1InC(as3_bodyA:uint,as3_pivotInA:uint,as3_axisInA:uint,as3_useReferenceFrameA:int):uint")));
+void createHingeConstraint1InC() __attribute__((used, annotate("as3sig:public function createHingeConstraint1InC(as3_bodyA:uint,as3_pivotInA:uint,as3_axisInA:uint,as3_useReferenceFrameA:int):uint"), annotate("as3package:AWPC_Run")));
 void createHingeConstraint1InC(){
 	btRigidBody* bodyA;
 	btVector3* pivotInA;
 	btVector3* axisInA;
 	int useReferenceFrameA;
-	AS3_CopyAS3ToC(as3_bodyA,bodyA);
-	AS3_CopyAS3ToC(as3_pivotInA,pivotInA);
-	AS3_CopyAS3ToC(as3_axisInA,axisInA);
-	AS3_CopyAS3ToC(as3_useReferenceFrameA,useReferenceFrameA);
+	AS3_GetScalarFromVar(bodyA, as3_bodyA);
+	AS3_GetScalarFromVar(pivotInA, as3_pivotInA);
+	AS3_GetScalarFromVar(axisInA, as3_axisInA);
+	AS3_GetScalarFromVar(useReferenceFrameA, as3_useReferenceFrameA);
 
 	btHingeConstraint* hinge = new btHingeConstraint(*bodyA, *pivotInA, *axisInA,useReferenceFrameA==1);
 
 	AS3_Return(hinge);
 }
 
-void createHingeConstraint2InC() __attribute__((used, annotate("as3sig:public function createHingeConstraint2InC(as3_bodyA:uint,as3_bodyB:uint,as3_pivotInA:uint,as3_pivotInB:uint,as3_axisInA:uint,as3_axisInB:uint,as3_useReferenceFrameA:int):uint")));
+void createHingeConstraint2InC() __attribute__((used, annotate("as3sig:public function createHingeConstraint2InC(as3_bodyA:uint,as3_bodyB:uint,as3_pivotInA:uint,as3_pivotInB:uint,as3_axisInA:uint,as3_axisInB:uint,as3_useReferenceFrameA:int):uint"), annotate("as3package:AWPC_Run")));
 void createHingeConstraint2InC(){
 	btRigidBody* bodyA;
 	btRigidBody* bodyB;
@@ -570,27 +595,27 @@ void createHingeConstraint2InC(){
 	btVector3* axisInA;
 	btVector3* axisInB;
 	int useReferenceFrameA;
-	AS3_CopyAS3ToC(as3_bodyA,bodyA);
-	AS3_CopyAS3ToC(as3_bodyB,bodyB);
-	AS3_CopyAS3ToC(as3_pivotInA,pivotInA);
-	AS3_CopyAS3ToC(as3_pivotInB,pivotInB);
-	AS3_CopyAS3ToC(as3_axisInA,axisInA);
-	AS3_CopyAS3ToC(as3_axisInB,axisInB);
-	AS3_CopyAS3ToC(as3_useReferenceFrameA,useReferenceFrameA);
+	AS3_GetScalarFromVar(bodyA, as3_bodyA);
+	AS3_GetScalarFromVar(bodyB, as3_bodyB);
+	AS3_GetScalarFromVar(pivotInA, as3_pivotInA);
+	AS3_GetScalarFromVar(pivotInB, as3_pivotInB);
+	AS3_GetScalarFromVar(axisInA, as3_axisInA);
+	AS3_GetScalarFromVar(axisInB, as3_axisInB);
+	AS3_GetScalarFromVar(useReferenceFrameA, as3_useReferenceFrameA);
 
 	btHingeConstraint* hinge = new btHingeConstraint(*bodyA,*bodyB, *pivotInA,*pivotInB, *axisInA,*axisInB,useReferenceFrameA==1);
 
 	AS3_Return(hinge);
 }
 
-void createConeTwistConstraint1() __attribute__((used, annotate("as3sig:public function createConeTwistConstraint1(as3_bodyA:uint,as3_pivotInA:uint,as3_rot:uint):uint")));
+void createConeTwistConstraint1() __attribute__((used, annotate("as3sig:public function createConeTwistConstraint1(as3_bodyA:uint,as3_pivotInA:uint,as3_rot:uint):uint"), annotate("as3package:AWPC_Run")));
 void createConeTwistConstraint1(){
 	btRigidBody* bodyA;
 	btVector3* pivotInA;
 	btMatrix3x3* rot;
-	AS3_CopyAS3ToC(as3_bodyA,bodyA);
-	AS3_CopyAS3ToC(as3_pivotInA,pivotInA);
-	AS3_CopyAS3ToC(as3_rot,rot);
+	AS3_GetScalarFromVar(bodyA, as3_bodyA);
+	AS3_GetScalarFromVar(pivotInA, as3_pivotInA);
+	AS3_GetScalarFromVar(rot, as3_rot);
 
 	btTransform frameInA;
 	frameInA.setIdentity();
@@ -603,7 +628,7 @@ void createConeTwistConstraint1(){
 	AS3_Return(coneTwist);
 }
 
-void createConeTwistConstraint2() __attribute__((used, annotate("as3sig:public function createConeTwistConstraint2(as3_bodyA:uint,as3_pivotInA:uint,as3_rotationInA:uint,as3_bodyB:uint,as3_pivotInB:uint,as3_rotationInB:uint):uint")));
+void createConeTwistConstraint2() __attribute__((used, annotate("as3sig:public function createConeTwistConstraint2(as3_bodyA:uint,as3_pivotInA:uint,as3_rotationInA:uint,as3_bodyB:uint,as3_pivotInB:uint,as3_rotationInB:uint):uint"), annotate("as3package:AWPC_Run")));
 void createConeTwistConstraint2(){
 	btRigidBody* bodyA;
 	btVector3* pivotInA;
@@ -612,12 +637,12 @@ void createConeTwistConstraint2(){
 	btVector3* pivotInB;
 	btMatrix3x3* rotationInB;
 	
-	AS3_CopyAS3ToC(as3_bodyA,bodyA);
-	AS3_CopyAS3ToC(as3_pivotInA,pivotInA);
-	AS3_CopyAS3ToC(as3_rotationInA,rotationInA);
-	AS3_CopyAS3ToC(as3_bodyB,bodyB);
-	AS3_CopyAS3ToC(as3_pivotInB,pivotInB);
-	AS3_CopyAS3ToC(as3_rotationInB,rotationInB);
+	AS3_GetScalarFromVar(bodyA, as3_bodyA);
+	AS3_GetScalarFromVar(pivotInA, as3_pivotInA);
+	AS3_GetScalarFromVar(rotationInA, as3_rotationInA);
+	AS3_GetScalarFromVar(bodyB, as3_bodyB);
+	AS3_GetScalarFromVar(pivotInB, as3_pivotInB);
+	AS3_GetScalarFromVar(rotationInB, as3_rotationInB);
 
 	btTransform frameInA;
 	frameInA.setIdentity();
@@ -634,16 +659,16 @@ void createConeTwistConstraint2(){
 	AS3_Return(coneTwist);
 }
 
-void createGeneric6DofConstraint1() __attribute__((used, annotate("as3sig:public function createGeneric6DofConstraint1(as3_bodyA:uint,as3_pivotInA:uint,as3_rot:uint,as3_useLinearReferenceFrameA:int):uint")));
+void createGeneric6DofConstraint1() __attribute__((used, annotate("as3sig:public function createGeneric6DofConstraint1(as3_bodyA:uint,as3_pivotInA:uint,as3_rot:uint,as3_useLinearReferenceFrameA:int):uint"), annotate("as3package:AWPC_Run")));
 void createGeneric6DofConstraint1(){
 	btRigidBody* bodyA;
 	btVector3* pivotInA;
 	btMatrix3x3* rot;
 	int useLinearReferenceFrameA;
-	AS3_CopyAS3ToC(as3_bodyA,bodyA);
-	AS3_CopyAS3ToC(as3_pivotInA,pivotInA);
-	AS3_CopyAS3ToC(as3_rot,rot);
-	AS3_CopyAS3ToC(as3_useLinearReferenceFrameA,useLinearReferenceFrameA);
+	AS3_GetScalarFromVar(bodyA, as3_bodyA);
+	AS3_GetScalarFromVar(pivotInA, as3_pivotInA);
+	AS3_GetScalarFromVar(rot, as3_rot);
+	AS3_GetScalarFromVar(useLinearReferenceFrameA, as3_useLinearReferenceFrameA);
 
 	btTransform frameInA;
 	frameInA.setIdentity();
@@ -655,7 +680,7 @@ void createGeneric6DofConstraint1(){
 	AS3_Return(generic6Dof);
 }
 
-void createGeneric6DofConstraint2() __attribute__((used, annotate("as3sig:public function createGeneric6DofConstraint2(as3_bodyA:uint,as3_pivotInA:uint,as3_rotationInA:uint,as3_bodyB:uint,as3_pivotInB:uint,as3_rotationInB:uint,as3_useLinearReferenceFrameA:int):uint")));
+void createGeneric6DofConstraint2() __attribute__((used, annotate("as3sig:public function createGeneric6DofConstraint2(as3_bodyA:uint,as3_pivotInA:uint,as3_rotationInA:uint,as3_bodyB:uint,as3_pivotInB:uint,as3_rotationInB:uint,as3_useLinearReferenceFrameA:int):uint"), annotate("as3package:AWPC_Run")));
 void createGeneric6DofConstraint2(){
 	btRigidBody* bodyA;
 	btVector3* pivotInA;
@@ -665,13 +690,13 @@ void createGeneric6DofConstraint2(){
 	btMatrix3x3* rotationInB;
 	int useLinearReferenceFrameA;
 	
-	AS3_CopyAS3ToC(as3_bodyA,bodyA);
-	AS3_CopyAS3ToC(as3_pivotInA,pivotInA);
-	AS3_CopyAS3ToC(as3_rotationInA,rotationInA);
-	AS3_CopyAS3ToC(as3_bodyB,bodyB);
-	AS3_CopyAS3ToC(as3_pivotInB,pivotInB);
-	AS3_CopyAS3ToC(as3_rotationInB,rotationInB);
-	AS3_CopyAS3ToC(as3_useLinearReferenceFrameA,useLinearReferenceFrameA);
+	AS3_GetScalarFromVar(bodyA, as3_bodyA);
+	AS3_GetScalarFromVar(pivotInA, as3_pivotInA);
+	AS3_GetScalarFromVar(rotationInA, as3_rotationInA);
+	AS3_GetScalarFromVar(bodyB, as3_bodyB);
+	AS3_GetScalarFromVar(pivotInB, as3_pivotInB);
+	AS3_GetScalarFromVar(rotationInB, as3_rotationInB);
+	AS3_GetScalarFromVar(useLinearReferenceFrameA, as3_useLinearReferenceFrameA);
 	
 	btTransform frameInA;
 	frameInA.setIdentity();
@@ -689,12 +714,12 @@ void createGeneric6DofConstraint2(){
 }
 
 //add a constraint to the dynamics world
-void addConstraintInC() __attribute__((used, annotate("as3sig:public function addConstraintInC(as3_constraint:uint,as3_disableCollisions:int):uint")));
+void addConstraintInC() __attribute__((used, annotate("as3sig:public function addConstraintInC(as3_constraint:uint,as3_disableCollisions:int):uint"), annotate("as3package:AWPC_Run")));
 void addConstraintInC(){
 	btTypedConstraint* constraint;
 	int disableCollisions;
-	AS3_CopyAS3ToC(as3_constraint,constraint);
-	AS3_CopyAS3ToC(as3_disableCollisions,disableCollisions);
+	AS3_GetScalarFromVar(constraint, as3_constraint);
+	AS3_GetScalarFromVar(disableCollisions, as3_disableCollisions);
 
 	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->addConstraint(constraint,disableCollisions==1);
@@ -703,10 +728,10 @@ void addConstraintInC(){
 }
 
 /// remove constraint
-void removeConstraintInC() __attribute__((used, annotate("as3sig:public function removeConstraintInC(as3_constraint:uint):uint")));
+void removeConstraintInC() __attribute__((used, annotate("as3sig:public function removeConstraintInC(as3_constraint:uint):uint"), annotate("as3package:AWPC_Run")));
 void removeConstraintInC(){
 	btTypedConstraint* constraint;
-	AS3_CopyAS3ToC(as3_constraint,constraint);
+	AS3_GetScalarFromVar(constraint, as3_constraint);
 
 	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->removeConstraint(constraint);
@@ -715,7 +740,17 @@ void removeConstraintInC(){
 	AS3_Return(0);
 }
 
-void createVehicleInC() __attribute__((used, annotate("as3sig:public function createVehicleInC(as3_chassis:uint,as3_suspensionStiffness:Number,as3_suspensionCompression:Number,as3_suspensionDamping:Number,as3_maxSuspensionTravelCm:Number,as3_frictionSlip:Number,as3_maxSuspensionForce:Number):uint")));
+void disposeConstraintInC() __attribute__((used, annotate("as3sig:public function disposeConstraintInC(as3_constraint:uint):uint"), annotate("as3package:AWPC_Run")));
+void disposeConstraintInC(){
+	btTypedConstraint* constraint;
+	AS3_GetScalarFromVar(constraint, as3_constraint);
+
+	delete constraint;
+	
+	AS3_Return(0);
+}
+
+void createVehicleInC() __attribute__((used, annotate("as3sig:public function createVehicleInC(as3_chassis:uint,as3_suspensionStiffness:Number,as3_suspensionCompression:Number,as3_suspensionDamping:Number,as3_maxSuspensionTravelCm:Number,as3_frictionSlip:Number,as3_maxSuspensionForce:Number):uint"), annotate("as3package:AWPC_Run")));
 void createVehicleInC() {
 	btRigidBody* chassis;
 	float suspensionStiffness;
@@ -724,13 +759,13 @@ void createVehicleInC() {
 	float maxSuspensionTravelCm;
 	float frictionSlip;
 	float maxSuspensionForce;
-	AS3_CopyAS3ToC(as3_chassis,chassis);
-	AS3_CopyAS3ToC(as3_suspensionStiffness,suspensionStiffness);
-	AS3_CopyAS3ToC(as3_suspensionCompression,suspensionCompression);
-	AS3_CopyAS3ToC(as3_suspensionDamping,suspensionDamping);
-	AS3_CopyAS3ToC(as3_maxSuspensionTravelCm,maxSuspensionTravelCm);
-	AS3_CopyAS3ToC(as3_frictionSlip,frictionSlip);
-	AS3_CopyAS3ToC(as3_maxSuspensionForce,maxSuspensionForce);
+	AS3_GetScalarFromVar(chassis, as3_chassis);
+	AS3_GetScalarFromVar(suspensionStiffness, as3_suspensionStiffness);
+	AS3_GetScalarFromVar(suspensionCompression, as3_suspensionCompression);
+	AS3_GetScalarFromVar(suspensionDamping, as3_suspensionDamping);
+	AS3_GetScalarFromVar(maxSuspensionTravelCm, as3_maxSuspensionTravelCm);
+	AS3_GetScalarFromVar(frictionSlip, as3_frictionSlip);
+	AS3_GetScalarFromVar(maxSuspensionForce, as3_maxSuspensionForce);
 
 	btRaycastVehicle::btVehicleTuning m_tuning;
 	m_tuning.m_suspensionStiffness=suspensionStiffness;
@@ -748,7 +783,7 @@ void createVehicleInC() {
 	AS3_Return(m_vehicle);
 }
 
-void addVehicleWheelInC() __attribute__((used, annotate("as3sig:public function addVehicleWheelInC(as3_vehicle:uint,as3_connectionPointCS0:uint,as3_wheelDirectionCS0:uint,as3_wheelAxleCS:uint,as3_suspensionStiffness:Number,as3_suspensionCompression:Number,as3_suspensionDamping:Number,as3_maxSuspensionTravelCm:Number,as3_frictionSlip:Number,as3_maxSuspensionForce:Number,as3_suspensionRestLength:Number,as3_wheelRadius:Number,as3_isFrontWheel:int):uint")));
+void addVehicleWheelInC() __attribute__((used, annotate("as3sig:public function addVehicleWheelInC(as3_vehicle:uint,as3_connectionPointCS0:uint,as3_wheelDirectionCS0:uint,as3_wheelAxleCS:uint,as3_suspensionStiffness:Number,as3_suspensionCompression:Number,as3_suspensionDamping:Number,as3_maxSuspensionTravelCm:Number,as3_frictionSlip:Number,as3_maxSuspensionForce:Number,as3_suspensionRestLength:Number,as3_wheelRadius:Number,as3_isFrontWheel:int):uint"), annotate("as3package:AWPC_Run")));
 void addVehicleWheelInC(){
 	btRaycastVehicle* m_vehicle;
 	btVector3* connectionPointCS0;
@@ -763,19 +798,19 @@ void addVehicleWheelInC(){
 	float suspensionRestLength;
 	float wheelRadius;
 	int isFrontWheel;
-	AS3_CopyAS3ToC(as3_vehicle,m_vehicle);
-	AS3_CopyAS3ToC(as3_connectionPointCS0,connectionPointCS0);
-	AS3_CopyAS3ToC(as3_wheelDirectionCS0,wheelDirectionCS0);
-	AS3_CopyAS3ToC(as3_wheelAxleCS,wheelAxleCS);
-	AS3_CopyAS3ToC(as3_suspensionStiffness,suspensionStiffness);
-	AS3_CopyAS3ToC(as3_suspensionCompression,suspensionCompression);
-	AS3_CopyAS3ToC(as3_suspensionDamping,suspensionDamping);
-	AS3_CopyAS3ToC(as3_maxSuspensionTravelCm,maxSuspensionTravelCm);
-	AS3_CopyAS3ToC(as3_frictionSlip,frictionSlip);
-	AS3_CopyAS3ToC(as3_maxSuspensionForce,maxSuspensionForce);
-	AS3_CopyAS3ToC(as3_suspensionRestLength,suspensionRestLength);
-	AS3_CopyAS3ToC(as3_wheelRadius,wheelRadius);
-	AS3_CopyAS3ToC(as3_isFrontWheel,isFrontWheel);
+	AS3_GetScalarFromVar(m_vehicle, as3_vehicle);
+	AS3_GetScalarFromVar(connectionPointCS0, as3_connectionPointCS0);
+	AS3_GetScalarFromVar(wheelDirectionCS0, as3_wheelDirectionCS0);
+	AS3_GetScalarFromVar(wheelAxleCS, as3_wheelAxleCS);
+	AS3_GetScalarFromVar(suspensionStiffness, as3_suspensionStiffness);
+	AS3_GetScalarFromVar(suspensionCompression, as3_suspensionCompression);
+	AS3_GetScalarFromVar(suspensionDamping, as3_suspensionDamping);
+	AS3_GetScalarFromVar(maxSuspensionTravelCm, as3_maxSuspensionTravelCm);
+	AS3_GetScalarFromVar(frictionSlip, as3_frictionSlip);
+	AS3_GetScalarFromVar(maxSuspensionForce, as3_maxSuspensionForce);
+	AS3_GetScalarFromVar(suspensionRestLength, as3_suspensionRestLength);
+	AS3_GetScalarFromVar(wheelRadius, as3_wheelRadius);
+	AS3_GetScalarFromVar(isFrontWheel, as3_isFrontWheel);
 
 	btRaycastVehicle::btVehicleTuning m_tuning;
 	m_tuning.m_suspensionStiffness=suspensionStiffness;
@@ -790,10 +825,10 @@ void addVehicleWheelInC(){
 	AS3_Return(&m_vehicle->getWheelInfo(m_vehicle->getNumWheels()-1));
 }
 
-void addVehicleInC() __attribute__((used, annotate("as3sig:public function addVehicleInC(as3_vehicle:uint):uint")));
+void addVehicleInC() __attribute__((used, annotate("as3sig:public function addVehicleInC(as3_vehicle:uint):uint"), annotate("as3package:AWPC_Run")));
 void addVehicleInC(){
 	btActionInterface* vehicle;
-	AS3_CopyAS3ToC(as3_vehicle,vehicle);
+	AS3_GetScalarFromVar(vehicle, as3_vehicle);
 
 	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->addVehicle(vehicle);
@@ -801,10 +836,10 @@ void addVehicleInC(){
 	AS3_Return(0);
 }
 
-void removeVehicleInC() __attribute__((used, annotate("as3sig:public function removeVehicleInC(as3_vehicle:uint):uint")));
+void removeVehicleInC() __attribute__((used, annotate("as3sig:public function removeVehicleInC(as3_vehicle:uint):uint"), annotate("as3package:AWPC_Run")));
 void removeVehicleInC(){
 	btActionInterface* vehicle;
-	AS3_CopyAS3ToC(as3_vehicle,vehicle);
+	AS3_GetScalarFromVar(vehicle, as3_vehicle);
 
 	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->removeVehicle(vehicle);
@@ -812,10 +847,20 @@ void removeVehicleInC(){
 	AS3_Return(0);
 }
 
-void createGhostObjectInC() __attribute__((used, annotate("as3sig:public function createGhostObjectInC(as3_shape:uint):uint")));
+void disposeVehicleInC() __attribute__((used, annotate("as3sig:public function disposeVehicleInC(as3_vehicle:uint):uint"), annotate("as3package:AWPC_Run")));
+void disposeVehicleInC(){
+	btActionInterface* vehicle;
+	AS3_GetScalarFromVar(vehicle, as3_vehicle);
+
+	delete vehicle;
+	
+	AS3_Return(0);
+}
+
+void createGhostObjectInC() __attribute__((used, annotate("as3sig:public function createGhostObjectInC(as3_shape:uint):uint"), annotate("as3package:AWPC_Run")));
 void createGhostObjectInC(){
 	btCollisionShape* shape;
-	AS3_CopyAS3ToC(as3_shape,shape);
+	AS3_GetScalarFromVar(shape, as3_shape);
 
 	btPairCachingGhostObject* ghostObject = new btPairCachingGhostObject();
 	ghostObject->setCollisionShape(shape);
@@ -823,30 +868,30 @@ void createGhostObjectInC(){
 	AS3_Return(ghostObject);
 }
 
-void createCharacterInC() __attribute__((used, annotate("as3sig:public function createCharacterInC(as3_ghostObject:uint,as3_shape:uint,as3_stepHeight:Number,as3_upAxis:int):uint")));
+void createCharacterInC() __attribute__((used, annotate("as3sig:public function createCharacterInC(as3_ghostObject:uint,as3_shape:uint,as3_stepHeight:Number,as3_upAxis:int):uint"), annotate("as3package:AWPC_Run")));
 void createCharacterInC(){
 	btPairCachingGhostObject* ghostObject;
 	btConvexShape* shape;
 	float stepHeight;
 	int upAxis;
-	AS3_CopyAS3ToC(as3_ghostObject,ghostObject);
-	AS3_CopyAS3ToC(as3_shape,shape);
-	AS3_CopyAS3ToC(as3_stepHeight,stepHeight);
-	AS3_CopyAS3ToC(as3_upAxis,upAxis);
+	AS3_GetScalarFromVar(ghostObject, as3_ghostObject);
+	AS3_GetScalarFromVar(shape, as3_shape);
+	AS3_GetScalarFromVar(stepHeight, as3_stepHeight);
+	AS3_GetScalarFromVar(upAxis, as3_upAxis);
 
 	btKinematicCharacterController* character = new btKinematicCharacterController (ghostObject,shape,stepHeight,upAxis);
 
 	AS3_Return(character);
 }
 
-void addCharacterInC() __attribute__((used, annotate("as3sig:public function addCharacterInC(as3_character:uint,as3_group:int,as3_mask:int):uint")));
+void addCharacterInC() __attribute__((used, annotate("as3sig:public function addCharacterInC(as3_character:uint,as3_group:int,as3_mask:int):uint"), annotate("as3package:AWPC_Run")));
 void addCharacterInC(){
 	btKinematicCharacterController* character;
 	int group;
 	int mask;
-	AS3_CopyAS3ToC(as3_character,character);
-	AS3_CopyAS3ToC(as3_group,group);
-	AS3_CopyAS3ToC(as3_mask,mask);
+	AS3_GetScalarFromVar(character, as3_character);
+	AS3_GetScalarFromVar(group, as3_group);
+	AS3_GetScalarFromVar(mask, as3_mask);
 
 	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->addCollisionObject(character->m_ghostObject,group,mask);
@@ -855,10 +900,10 @@ void addCharacterInC(){
 	AS3_Return(0);
 }
 
-void removeCharacterInC() __attribute__((used, annotate("as3sig:public function removeCharacterInC(as3_character:uint):uint")));
+void removeCharacterInC() __attribute__((used, annotate("as3sig:public function removeCharacterInC(as3_character:uint):uint"), annotate("as3package:AWPC_Run")));
 void removeCharacterInC(){
 	btKinematicCharacterController* character;
-	AS3_CopyAS3ToC(as3_character,character);
+	AS3_GetScalarFromVar(character, as3_character);
 
 	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->removeCollisionObject(character->m_ghostObject);
@@ -868,15 +913,25 @@ void removeCharacterInC(){
 	AS3_Return(0);
 }
 
+void disposeCharacterInC() __attribute__((used, annotate("as3sig:public function disposeCharacterInC(as3_character:uint):uint"), annotate("as3package:AWPC_Run")));
+void disposeCharacterInC(){
+	btKinematicCharacterController* character;
+	AS3_GetScalarFromVar(character, as3_character);
+
+	delete character;
+	
+	AS3_Return(0);
+}
+
 /// physic step
-void physicsStepInC() __attribute__((used, annotate("as3sig:public function physicsStepInC(as3_timestep:Number,as3_maxsubstep:int,as3_fixedtime:Number):uint")));
+void physicsStepInC() __attribute__((used, annotate("as3sig:public function physicsStepInC(as3_timestep:Number,as3_maxsubstep:int,as3_fixedtime:Number):uint"), annotate("as3package:AWPC_Run")));
 void physicsStepInC() {
 	float timestep;
 	int maxsubstep;
 	float fixedtime;
-	AS3_CopyAS3ToC(as3_timestep,timestep);
-	AS3_CopyAS3ToC(as3_maxsubstep,maxsubstep);
-	AS3_CopyAS3ToC(as3_fixedtime,fixedtime);
+	AS3_GetScalarFromVar(timestep, as3_timestep);
+	AS3_GetScalarFromVar(maxsubstep, as3_maxsubstep);
+	AS3_GetScalarFromVar(fixedtime, as3_fixedtime);
 
 	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->stepSimulation(timestep,maxsubstep,fixedtime);
@@ -907,8 +962,8 @@ void physicsStepInC() {
 			mpt->m_appliedImpulse=0;
 			
 			inline_as3(
-				"import com.adobe.alchemy.AlcConsole;\n"
-	  			"AlcConsole.current.rayCastCallback(%0,%1,%2);\n"
+				"import com.adobe.flascc.CModule;\n"
+	  			"CModule.rootSprite.rayCastCallback(%0,%1,%2);\n"
                 : : "r"(ray->m_collisionObject), "r"(mpt), "r"(resultCallback.m_collisionObject)
             );
 			
@@ -946,8 +1001,8 @@ void physicsStepInC() {
 					mpt->m_appliedImpulse/=numContacts;
 					
 					inline_as3(
-						"import com.adobe.alchemy.AlcConsole;\n"
-	  					"AlcConsole.current.collisionCallback(%0,%1,%2);\n"
+						"import com.adobe.flascc.CModule;\n"
+	  					"CModule.rootSprite.collisionCallback(%0,%1,%2);\n"
                 		: : "r"(obA), "r"(mpt), "r"(obB)
            			);
 
@@ -978,8 +1033,8 @@ void physicsStepInC() {
 					mpt->m_appliedImpulse/=numContacts;
 					
 					inline_as3(
-						"import com.adobe.alchemy.AlcConsole;\n"
-	  					"AlcConsole.current.collisionCallback(%0,%1,%2);\n"
+						"import com.adobe.flascc.CModule;\n"
+	  					"CModule.rootSprite.collisionCallback(%0,%1,%2);\n"
                 		: : "r"(obB), "r"(mpt), "r"(obA)
            			);
 

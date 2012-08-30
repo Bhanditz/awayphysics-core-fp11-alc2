@@ -1,14 +1,9 @@
 package awayphysics.collision.dispatch {
-	import C_Run.addCollisionObjectInC;
-	import C_Run.removeCollisionObjectInC;
+	import AWPC_Run.addCollisionObjectInC;
+	import AWPC_Run.removeCollisionObjectInC;
 	
 	import awayphysics.AWPBase;
 	import awayphysics.collision.dispatch.AWPCollisionObject;
-	import awayphysics.collision.shapes.AWPBvhTriangleMeshShape;
-	import awayphysics.collision.shapes.AWPCompoundShape;
-	import awayphysics.collision.shapes.AWPConvexHullShape;
-	import awayphysics.collision.shapes.AWPHeightfieldTerrainShape;
-	import awayphysics.data.AWPCollisionShapeType;
 	
 	import flash.utils.Dictionary;
 		
@@ -24,29 +19,27 @@ package awayphysics.collision.dispatch {
 			return m_collisionObjects;
 		}
 		
+		/**
+		 * add a collisionObject to collision world
+		 */
 		public function addCollisionObject(obj:AWPCollisionObject, group:int = 1, mask:int = -1):void{
-			addCollisionObjectInC(obj.pointer, group, mask);
-			
 			if(!m_collisionObjects.hasOwnProperty(obj.pointer.toString())){
 				m_collisionObjects[obj.pointer.toString()] = obj;
+				addCollisionObjectInC(obj.pointer, group, mask);
 			}
 		}
 		
-		public function removeCollisionObject(obj:AWPCollisionObject) : void {
-			obj.removeAllRays();
-			if(obj.shape.shapeType==AWPCollisionShapeType.TRIANGLE_MESH_SHAPE){
-				AWPBvhTriangleMeshShape(obj.shape).deleteBvhTriangleMeshShapeBuffer();
-			}else if(obj.shape.shapeType==AWPCollisionShapeType.CONVEX_HULL_SHAPE){
-				AWPConvexHullShape(obj.shape).deleteConvexHullShapeBuffer();
-			}else if(obj.shape.shapeType==AWPCollisionShapeType.HEIGHT_FIELD_TERRAIN){
-				AWPHeightfieldTerrainShape(obj.shape).deleteHeightfieldTerrainShapeBuffer();
-			}else if(obj.shape.shapeType==AWPCollisionShapeType.COMPOUND_SHAPE){
-				AWPCompoundShape(obj.shape).removeAllChildren();
-			}
-			removeCollisionObjectInC(obj.pointer);
-			
+		/**
+		 * remove a collisionObject from collision world, if cleanup is true, release pointer in memory.
+		 */
+		public function removeCollisionObject(obj:AWPCollisionObject, cleanup:Boolean = false) : void {			
 			if(m_collisionObjects.hasOwnProperty(obj.pointer.toString())){
 				delete m_collisionObjects[obj.pointer.toString()];
+				removeCollisionObjectInC(obj.pointer);
+				
+				if (cleanup) {
+					obj.dispose();
+				}
 			}
 		}
 	}

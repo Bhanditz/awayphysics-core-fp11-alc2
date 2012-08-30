@@ -1,7 +1,7 @@
 package awayphysics.collision.shapes {
 	import flash.geom.Vector3D;
-	import com.adobe.alchemy.CModule;
-	import C_Run.createCylinderShapeInC;
+	import AWPC_Run.CModule;
+	import AWPC_Run.createCylinderShapeInC;
 	import awayphysics.math.AWPVector3;
 
 	public class AWPCylinderShape extends AWPCollisionShape {

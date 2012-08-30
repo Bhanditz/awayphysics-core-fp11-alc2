@@ -5,6 +5,7 @@ package awayphysics {
 		 * refer to http://www.bulletphysics.org/mediawiki-1.5.8/index.php?title=Scaling_The_World
 		 */
 		protected static var _scaling : Number = 100;
+		protected var _cleanup:Boolean = false;
 		public var pointer : uint;
 	}
 }

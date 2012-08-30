@@ -1,7 +1,7 @@
 package awayphysics.dynamics {
-	import C_Run.createBodyInC;
-	import C_Run.setBodyMassInC;
-	import com.adobe.alchemy.CModule;
+	import AWPC_Run.createBodyInC;
+	import AWPC_Run.setBodyMassInC;
+	import AWPC_Run.CModule;
 	import away3d.containers.ObjectContainer3D;
 
 	import awayphysics.collision.dispatch.AWPCollisionObject;

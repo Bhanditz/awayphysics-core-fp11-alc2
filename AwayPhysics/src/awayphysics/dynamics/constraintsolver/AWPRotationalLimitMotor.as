@@ -1,5 +1,5 @@
 package awayphysics.dynamics.constraintsolver {
-	import com.adobe.alchemy.CModule;
+	import AWPC_Run.CModule;
 	import awayphysics.AWPBase;
 
 	public class AWPRotationalLimitMotor extends AWPBase {

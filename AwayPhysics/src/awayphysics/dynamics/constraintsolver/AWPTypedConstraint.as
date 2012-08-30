@@ -1,4 +1,6 @@
 package awayphysics.dynamics.constraintsolver {
+	import AWPC_Run.disposeConstraintInC;
+	
 	import awayphysics.AWPBase;
 	import awayphysics.dynamics.AWPRigidBody;
 
@@ -22,6 +24,13 @@ package awayphysics.dynamics.constraintsolver {
 		
 		public function get constraintType():int {
 			return m_constraintType;
+		}
+		
+		public function dispose():void {
+			if (!_cleanup) {
+				_cleanup = true;
+				disposeConstraintInC(pointer);
+			}
 		}
 	}
 }

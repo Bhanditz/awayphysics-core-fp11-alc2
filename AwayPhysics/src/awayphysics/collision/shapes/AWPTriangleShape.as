@@ -1,7 +1,7 @@
 package awayphysics.collision.shapes 
 {
-	import com.adobe.alchemy.CModule;
-	import C_Run.createTriangleShapeInC;
+	import AWPC_Run.CModule;
+	import AWPC_Run.createTriangleShapeInC;
 	import awayphysics.math.AWPVector3;
 	import flash.geom.Vector3D;
 	
