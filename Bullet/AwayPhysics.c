@@ -1,7 +1,6 @@
 
 /*
-compile: g++ -I./ AwayPhysics.c libbulletdynamics.a libbulletcollision.a libbulletmath.a -emit-swc=AWPC_Run -O4 -falcon -fno-exceptions -Wall -o AwayPhysics.swc
-
+compile: /g++ -I./ AwayPhysics.c libbulletdynamics.a libbulletcollision.a libbulletmath.a -emit-swc=AWPC_Run -O4 -fno-exceptions -Wall -o AwayPhysics.swc
 */
 
 #include <stdlib.h>

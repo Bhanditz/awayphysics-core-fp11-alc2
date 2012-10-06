@@ -20,13 +20,7 @@ subject to the following restrictions:
 #include "LinearMath/btMinMax.h"
 #include <new>
 #include "btSolverBody.h"
-#include "AS3.h"
-#include <stdio.h>
 
-extern "C"
-{
-    void sztrace(char*);
-}
 
 //#define HINGE_USE_OBSOLETE_SOLVER false
 #define HINGE_USE_OBSOLETE_SOLVER false
