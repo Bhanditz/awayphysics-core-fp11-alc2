@@ -1,14 +1,7 @@
 package awayphysics.collision.shapes {
-	import AWPC_Run.CModule;
-	import AWPC_Run.createTriangleIndexDataBufferInC;
-	import AWPC_Run.removeTriangleIndexDataBufferInC;
-	import AWPC_Run.createTriangleVertexDataBufferInC;
-	import AWPC_Run.removeTriangleVertexDataBufferInC;
-	import AWPC_Run.createTriangleIndexVertexArrayInC;
-	import AWPC_Run.createBvhTriangleMeshShapeInC;
-	import AWPC_Run.disposeCollisionShapeInC;
+	import AWPC_Run.*;
 	
-	import away3d.core.base.Geometry;
+	import away3d.core.base.*;
 
 	public class AWPBvhTriangleMeshShape extends AWPCollisionShape {
 		private var indexDataPtr : uint;
@@ -30,14 +23,16 @@ package awayphysics.collision.shapes {
 			}
 
 			var vertexData : Vector.<Number> = geometry.subGeometries[0].vertexData;
-			var vertexDataLen : int = vertexData.length;
-			vertexDataPtr = createTriangleVertexDataBufferInC(vertexDataLen);
-
+			var vertexDataLen : int = vertexData.length/13;
+			vertexDataPtr = createTriangleVertexDataBufferInC(vertexDataLen*3);
+			
 			for (i = 0; i < vertexDataLen; i++ ) {
-				CModule.writeFloat(vertexDataPtr+i*4,vertexData[i] / _scaling);
+				CModule.writeFloat(vertexDataPtr+i*12,vertexData[i*13] / _scaling);
+				CModule.writeFloat(vertexDataPtr+i*12 + 4,vertexData[i*13+1] / _scaling);
+				CModule.writeFloat(vertexDataPtr+i*12 + 8,vertexData[i*13+2] / _scaling);
 			}
 
-			var triangleIndexVertexArrayPtr : uint = createTriangleIndexVertexArrayInC(int(indexDataLen / 3), indexDataPtr, int(vertexDataLen / 3), vertexDataPtr);
+			var triangleIndexVertexArrayPtr : uint = createTriangleIndexVertexArrayInC(int(indexDataLen / 3), indexDataPtr, int(vertexDataLen), vertexDataPtr);
 
 			pointer = createBvhTriangleMeshShapeInC(triangleIndexVertexArrayPtr, useQuantizedAabbCompression ? 1 : 0, 1);
 			super(pointer, 9);
